@@ -10,11 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 require_once __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-$dotenv->load();
-
-// Load environment variables manually (since we're not using Laravel's Dotenv)
-$env = parse_ini_file(__DIR__ . '/../../.env');
-
+$dotenv->safeLoad(); 
 require_once __DIR__ . '/../../controllers/PropertyController.php';
 require_once __DIR__ . '/../../config/database.php';
 
