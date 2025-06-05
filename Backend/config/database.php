@@ -1,8 +1,10 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
-$dotenv->load();
+// Always resolve the .env path relative to the project root
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->safeLoad(); // Use safeLoad to avoid fatal error if .env is missing
+
 class Database
 {
     private $host;
@@ -12,10 +14,10 @@ class Database
     public $conn;
 
     public function __construct(){
-        $this->host = getenv('DB_HOST');
-        $this->db_name = getenv('DB_DATABASE');
-        $this->username = getenv('DB_USERNAME');
-        $this->password = getenv('DB_PASSWORD'); // Set your DB password here
+        $this->host = $_ENV['DB_HOST'] ?? null;
+        $this->db_name = $_ENV['DB_DATABASE'] ?? null;
+        $this->username = $_ENV['DB_USERNAME'] ?? null;
+        $this->password = $_ENV['DB_PASSWORD'] ?? null;
     }
 
     public function getConnection(){
