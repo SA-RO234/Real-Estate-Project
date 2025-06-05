@@ -34,10 +34,10 @@ export default function UserNavigation({ setUser }: { setUser: (user: any) => vo
   };
 
   return (
-    <div className="flex bg-transparent relative p-[20px]  top-0 items-center gap-4">
+    <div className="flex bg-transparent  relative p-[20px]  top-0 items-center gap-4">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="bg-blue-600 text-white p-[0_100px]  border-0 border-red-600 outline-0 hover:bg-blue-600 hover:text-white rounded-full px-4 py-2 h-auto">
+          <Button className="bg-blue-600 cursor-pointer text-white p-[0_100px]  border-0 border-red-600 outline-0 hover:bg-blue-600 hover:text-white rounded-full px-4 py-2 h-auto">
             <img
               className="w-[50px] rounded-full h-[50px] object-cover"
               src={user?.avatar}

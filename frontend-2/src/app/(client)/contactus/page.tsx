@@ -1,6 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type React from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
-import type { NextApiRequest, NextApiResponse } from "next";
-import nodemailer from "nodemailer";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -28,23 +28,43 @@ export default function ContactForm() {
     message: true,
   });
 
+  // Auto-fill form with user info from localStorage if available
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storeUser = localStorage.getItem("user");
+      if (storeUser && storeUser !== "undefined" && storeUser !== "null") {
+        const userData = JSON.parse(storeUser);
+        setFormData((prev) => ({
+          ...prev,
+          name: userData.name || "",
+          email: userData.email || "",
+          phone: userData.phone || "",
+        }));
+        setErrors((prev) => ({
+          ...prev,
+          name: !userData.name,
+          email: !userData.email,
+          phone: !userData.phone,
+        }));
+      }
+    }
+  }, []);
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
 
-    // Update error state
     setErrors((prev) => ({
       ...prev,
       [field]: value.trim() === "",
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate all fields
     const newErrors = {
       name: formData.name.trim() === "",
       email: formData.email.trim() === "",
@@ -55,17 +75,38 @@ export default function ContactForm() {
 
     setErrors(newErrors);
 
-    // Check if form is valid
     const isValid = !Object.values(newErrors).some((error) => error);
 
     if (isValid) {
-      console.log("Form submitted:", formData);
-      // Handle form submission here
+      try {
+        const res = await fetch("http://localhost:3000/app/api/users.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+        if (res.ok) {
+          toast.success("Message sent successfully!");
+          setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            subject: "",
+            message: "",
+          });
+        } else {
+          toast.error("Failed to send message. Please try again.");
+        }
+      } catch (err) {
+        toast.error("Failed to send message. Please try again.");
+      }
     }
   };
 
+  // ...existing JSX code (form rendering)...
   return (
     <div className="container m-auto py-6">
+      {/* ...your existing JSX... */}
+      <ToastContainer position="top-right" />
       <div className="relative w-full h-[500px] overflow-hidden rounded-[30px] mb-16">
         <Image
           src="https://res.cloudinary.com/dnfahcxo3/image/upload/v1746551551/333b412d-b694-42f4-9144-974bb6b255a9.png"

@@ -40,3 +40,10 @@ yarn-error.log*
 next-env.d.ts
 
 .early.coverage
+
+
+.env
+.env.local
+.env.development
+.env.production
+.env.test
