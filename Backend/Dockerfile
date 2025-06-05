@@ -29,7 +29,7 @@ WORKDIR /var/www/html
 COPY --chown=www-data:www-data . .
 
 # If .env is in .dockerignore, uncomment the next line:
-COPY --chown=www-data:www-data .env /var/www/html/.env
+# COPY --chown=www-data:www-data .env /var/www/html/.env
 
 # Install dependencies as www-data user (after all files are present)
 RUN chown -R www-data:www-data /var/www/html \
