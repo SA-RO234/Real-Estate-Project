@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => 'fb80adb61aad94d4a27b44af57579304acd894c8',
+        'pretty_version' => 'dev-main',
+        'version' => 'dev-main',
+        'reference' => '4d40a31290f8a7ad11fa8f339bcfebe59a6ccacc',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => 'fb80adb61aad94d4a27b44af57579304acd894c8',
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '4d40a31290f8a7ad11fa8f339bcfebe59a6ccacc',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -61,6 +61,15 @@
             'reference' => 'a673d5f310477027cead2e2f2b6db5d8368157cb',
             'type' => 'library',
             'install_path' => __DIR__ . '/../paragonie/sodium_compat',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v6.10.0',
+            'version' => '6.10.0.0',
+            'reference' => 'bf74d75a1fde6beaa34a0ddae2ec5fce0f72a144',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
