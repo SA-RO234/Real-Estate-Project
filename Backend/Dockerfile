@@ -33,7 +33,7 @@ COPY --chown=www-data:www-data . .
 
 
 # Install dependencies as root user (default)
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 php -d memory_limit=-1 /usr/local/bin/composer install --no-interaction --no-scripts --optimize-autoloader --verbose
 
 # Fix permissions for www-data after installing dependencies
 RUN chown -R www-data:www-data /var/www/html
