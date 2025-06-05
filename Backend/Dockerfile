@@ -31,8 +31,9 @@ COPY --chown=www-data:www-data . .
 # If .env is in .dockerignore, uncomment the next line:
 # COPY --chown=www-data:www-data .env /var/www/html/.env
 
+
 # Install dependencies as root user (default)
-RUN composer install --no-interaction --optimize-autoloader
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-interaction --optimize-autoloader
 
 # Fix permissions for www-data after installing dependencies
 RUN chown -R www-data:www-data /var/www/html
