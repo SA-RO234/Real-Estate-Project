@@ -28,6 +28,7 @@ export default function UserNavigation({ setUser }: { setUser: (user: any) => vo
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("user")
     setLocalUser(null);
     setUser(null); // <-- This updates Navbar state immediately
     router.push("/");
