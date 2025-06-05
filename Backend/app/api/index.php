@@ -8,9 +8,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+require_once __DIR__ . '/../../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
 
-require_once "../controllers/PropertyController.php";
-require_once "../../config/database.php";
+// Load environment variables manually (since we're not using Laravel's Dotenv)
+$env = parse_ini_file(__DIR__ . '/../../.env');
+
+require_once __DIR__ . '/../../controllers/PropertyController.php';
+require_once __DIR__ . '/../../config/database.php';
 
 $properTyController = new PropertyController();
 $method = $_SERVER["REQUEST_METHOD"];
