@@ -31,9 +31,11 @@ COPY --chown=www-data:www-data . .
 # If .env is in .dockerignore, uncomment the next line:
 # COPY --chown=www-data:www-data .env /var/www/html/.env
 
-# Install dependencies as www-data user (after all files are present)
-RUN chown -R www-data:www-data /var/www/html \
-    && su -s /bin/sh www-data -c "composer install --no-interaction --optimize-autoloader"
+# Install dependencies as root user (default)
+RUN composer install --no-interaction --optimize-autoloader
+
+# Fix permissions for www-data after installing dependencies
+RUN chown -R www-data:www-data /var/www/html
 
 # Change Apache DocumentRoot to /var/www/html/app/api
 RUN sed -i 's!/var/www/html!/var/www/html/app/api!g' /etc/apache2/sites-available/000-default.conf
