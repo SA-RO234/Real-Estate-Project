@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install \
     pdo \
     pdo_mysql \
+    pdo_pgsql \
     intl \
     zip
 
@@ -30,7 +31,6 @@ COPY --chown=www-data:www-data . .
 
 # If .env is in .dockerignore, uncomment the next line:
 # COPY --chown=www-data:www-data .env /var/www/html/.env
-
 
 # Install dependencies as root user (default)
 RUN COMPOSER_ALLOW_SUPERUSER=1 php -d memory_limit=-1 /usr/local/bin/composer install --no-interaction --no-scripts --optimize-autoloader --verbose
