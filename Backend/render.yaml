@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: php-app
+    env: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    buildCommand: "" # No extra build command needed; Dockerfile handles build
+    startCommand: apache2-foreground
+    envVars:
+      - key: DB_HOST
+        value: dpg-d11gjum3jp1c73evngog-a.singapore-postgres.render.com
+      - key: DB_DATABASE
+        value: real_estatedb
+      - key: DB_USERNAME
+        value: root
+      - key: DB_PASSWORD
+        value: 33z4nc0lOF8PnEpCIFOIOJN40IkFsu2r
