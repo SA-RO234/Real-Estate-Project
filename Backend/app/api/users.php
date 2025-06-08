@@ -13,6 +13,10 @@ $method = $_SERVER['REQUEST_METHOD'];
 $url = $_SERVER['REQUEST_URI'];
 
 $routes = [
+    "OPTIONS" => function () {
+        http_response_code(200);
+        exit;
+    },
     "GET" => function () use ($usersController) {
         if (isset($_GET['role'])) {
             $usersController->getUserByRole($_GET['role']);
