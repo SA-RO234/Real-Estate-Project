@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import UserTable from "@/components/common/admin/user-table";
+import UserTable from "@/components/admin/user-table";
 import axios from "axios";
 interface User {
   id: number;
@@ -14,13 +14,13 @@ interface User {
 
 const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
-
   useEffect(()=>{
       const fetchuser = async ()=>{
         try {
           const response = await axios.get(
-            "http://localhost:3000/app/api/users.php?role=buyer"
+            "https://real-estate-clientside2.onrender.com?role=buyer"
           );
+          
           setUsers(response.data);
         } catch (error) {
           console.error("Failed to fetch users: ",error);
@@ -28,9 +28,10 @@ const UsersPage = () => {
       }
       fetchuser();
   },[]);
+
   return (
     <div>
-      <h2 className="text-3xl font-semibold pb-[20px] tracking-tight transition-colors">
+      <h2 className="text-3xl border-2 border-red-800 font-semibold pb-[20px] tracking-tight transition-colors">
         Customer Management
       </h2>
       <UserTable users={users} />

@@ -55,9 +55,9 @@ export default function Messages() {
     };
     fetchMessages();
   }, [receiver_id, sender_id]);
-   console.log("Data : "+messages);
+  
   return (
-    <div className="w-[30%] bg-white border-black border-5 rounded-lg shadow-sm p-4">
+    <div className="w-[100%] bg-white border-black border-5 rounded-lg shadow-sm p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-[30px] font-bold text-gray-800">New Messages</h2>
         <Link

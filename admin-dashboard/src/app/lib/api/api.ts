@@ -1,6 +1,7 @@
+
 export const fetchProperties = async (page: number = 1, limit: number = 4) => {
   const response = await fetch(
-    `http://localhost:3000/app/api/properties.php?page=${page}&limit=${limit}`
+    `https://real-estate-clientside2.onrender.com/?page=${page}&limit=${limit}`
   );
   const data = await response.json();
   const totalItems = response.headers.get("X-Total-Count")
@@ -20,7 +21,7 @@ export const fetchProperties = async (page: number = 1, limit: number = 4) => {
 
 //  Fetch ALl Property
 export const fetchAllProperties = async () => {
-  const response = await fetch(`http://localhost:3000/app/api/properties.php`);
+  const response = await fetch(`https://real-estate-clientside2.onrender.com`);
   const data = await response.json();
   return {
     data,
@@ -29,23 +30,21 @@ export const fetchAllProperties = async () => {
 
 //  Fetch Property for Ad
 export const fetchPropertyForAd = async () => {
-  const response = await fetch(
-    `http://localhost:3000/app/api/properties.php?ads`
-  );
+  const response = await fetch(`http://localhost:3000/app/api/index.php?ads`);
   const data = await response.json();
   return data;
 };
 
 export const fetchPropertyById = async (id: string) => {
   const response = await fetch(
-    `http://localhost:3000/app/api/properties.php/id=${id}`
+    `http://localhost:3000/app/api/index.php/id=${id}`
   );
   const data = await response.json();
   return data;
 };
 
 // New============================================
-const API_URL = "http://localhost:3000/app/api/properties.php";
+const API_URL = "http://localhost:3000/app/api/index.php";
 
 export async function getProperty(id: number) {
   const res = await fetch(`${API_URL}/properties/${id}`);
@@ -96,7 +95,7 @@ export async function deleteProperty(id: number) {
 //  ============================================
 export const fetchPropertyByCategory = async () => {
   const response = await fetch(
-    "http://localhost:3000/app/api/properties.php?typeCount"
+    "http://localhost:3000/app/api/index.php?typeCount"
   );
   const data = await response.json();
   return data;
@@ -106,8 +105,10 @@ export const fetchPropertyByCategory = async () => {
 
 export const fetchPropertyOfEachCity = async () => {
   const response = await fetch(
-    "http://localhost:3000/app/api/properties.php?byCity"
+    "http://localhost:3000/app/api/index.php?byCity"
   );
   const data = await response.json();
   return data;
 };
+
+

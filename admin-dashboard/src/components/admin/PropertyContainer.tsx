@@ -10,7 +10,8 @@ const Propertycontainer = () => {
   useEffect(() => {
     fetchProperties()
       .then((data: any) => {
-        setProperties(data.data);
+        // Ensure data.data is an array
+        setProperties(Array.isArray(data.data) ? data.data : []);
         setLoading(false);
       })
       .catch(() => {

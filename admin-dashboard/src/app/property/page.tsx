@@ -1,6 +1,5 @@
 import React from "react";
-import PropertyCard from "@/components/common/admin/Properties-card";
-import Propertycontainer from "@/components/common/admin/PropertyContainer";
+import Propertycontainer from "@/components/admin/PropertyContainer";
 // import data from "../dashboard/data.json";
 const PropertyPage = () => {
   return (

@@ -11,7 +11,7 @@ import {
 
 export function SectionCards() {
   return (
-    <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4 grid grid-cols-1 gap-4  *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card">
+    <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 h-[200px] @5xl/main:grid-cols-4 grid grid-cols-1 gap-4  *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card">
       <Card className="@container/card border-black border-5">
         <CardHeader className="relative">
           <CardDescription>Total Revenue</CardDescription>

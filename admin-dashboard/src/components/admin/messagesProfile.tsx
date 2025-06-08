@@ -6,7 +6,7 @@ const MessagesProfile = ({message}:{message: Message}) => {
     <div className="flex cursor-pointer items-center gap-3">
       <div className="relative">
         <Image
-          src={message.avatar}
+          src="https://res.cloudinary.com/dnfahcxo3/image/upload/v1746976988/eb902573-6af2-4244-a3d5-d6593aea6651.png"
           alt={message.sender_name}
           width={40}
           height={40}
@@ -18,8 +18,10 @@ const MessagesProfile = ({message}:{message: Message}) => {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="font-medium text-gray-900">{message.sender_name}</p>
-        <p className="text-sm text-gray-500 truncate">{message.preview}</p>
+        <p className="font-medium text-gray-900">Sun Rosa</p>
+        <p className="text-sm text-gray-500 truncate">
+          Lorem, ipsum. Lorem, ipsum dolor.
+        </p>
       </div>
 
       <div className="text-[20px] font-bold text-gray-500">

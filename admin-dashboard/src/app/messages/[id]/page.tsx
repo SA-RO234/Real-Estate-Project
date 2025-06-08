@@ -1,6 +1,6 @@
 "use client";
 
-import ChatInterface from "@/components/chatInterface";
+import ChatInterface from "@/components/admin/chatInterface";
 import { useParams } from "next/navigation";
 
 const MessageDetail = () => {

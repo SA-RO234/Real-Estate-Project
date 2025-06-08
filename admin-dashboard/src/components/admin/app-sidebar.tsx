@@ -22,13 +22,13 @@ import {
   UsersIcon,
   List,
   PlusCircle,
-  Mails
+  Mails,
 } from "lucide-react";
 
-import { NavDocuments } from "@/components/common/admin/nav-documents";
-import { NavMain } from "@/components/common/admin/nav-main";
-import { NavSecondary } from "@/components/common/admin/nav-secondary";
-import { NavUser } from "@/components/common/admin/nav-user";
+import { NavDocuments } from "@/components/admin/nav-documents";
+import { NavMain } from "@/components/admin/nav-main";
+import { NavSecondary } from "@/components/admin/nav-secondary";
+import { NavUser } from "@/components/admin/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -48,7 +48,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/",
       icon: LayoutDashboardIcon,
     },
     {
@@ -69,7 +69,7 @@ const data = {
       url: "/users",
       icon: UsersIcon,
       children: [
-        { title: "All Users", url: "/users", icon: List },
+        { title: "All Users", url: "/user", icon: List },
         { title: "Add User", url: "/users/add", icon: PlusCircle },
       ],
     },
@@ -82,66 +82,21 @@ const data = {
       //   { title: "Add User", url: "/users/add", icon: PlusCircle },
       // ],
     },
-    // {
-    //   title: "Rent",
-    //   url: "/rent",
-    //   icon: House,
-    // },
-    // {
-    //   title: "Buy",
-    //   url: "/buy",
-    //   icon: HandCoins,
-    // },
+ 
   ],
 
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: SettingsIcon,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: HelpCircleIcon,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: SearchIcon,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: DatabaseIcon,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: ClipboardListIcon,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: FileIcon,
-    },
-  ],
+
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const Navbar = {
-    url: "/dashboard",
+    url: "/",
     src: "https://res.cloudinary.com/dnfahcxo3/image/upload/v1745082558/9c2d1352-17cf-40b9-b71d-f6f2393ec6a0.png",
     alt: "logo",
   };
   return (
-    <Sidebar
-      collapsible="offcanvas"
-      {...props}
-    >
-      <SidebarMenu className="w-[100px]  0 h-[100px]">
+    <Sidebar collapsible="offcanvas" {...props}>
+      <SidebarMenu className="w-[100px]  h-[100px]">
         <a href={Navbar.url} className="h-[100%] w-[100%]">
           <img src={Navbar.src} alt="" className="w-full" />
         </a>
@@ -149,7 +104,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

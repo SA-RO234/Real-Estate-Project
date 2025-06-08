@@ -158,7 +158,7 @@ export function ChartAreaInteractive() {
   });
 
   return (
-    <Card className="@container/card w-[70%] border-black border-5">
+    <Card className="w-[100%] border-black border-5">
       <CardHeader className="relative">
         <CardTitle>Total Visitors</CardTitle>
         <CardDescription>

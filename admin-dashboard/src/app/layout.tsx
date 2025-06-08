@@ -1,8 +1,7 @@
 import React, { ReactNode } from "react";
-import { AppSidebar } from "@/components/common/admin/app-sidebar";
+import { AppSidebar } from "@/components/admin/app-sidebar";
 import "./globals.css";
-
-import { SiteHeader } from "@/components/common/admin/site-header";
+import { SiteHeader } from "@/components/admin/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function RootLayout({
@@ -12,12 +11,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <head>
+        <title>Kenh Pteas Huey|| Admin Dashboard</title>
+        <link rel="icon" href="../../public/assets/favicon.ico" />
+      
+      </head>
+      <body className="">
         <SidebarProvider>
           <AppSidebar variant="inset" />
           <SidebarInset>
             <SiteHeader />
-            <div className="flex flex-1 flex-col ">
+            <div className="flex flex-1 flex-col bg-white">
               <div className="@container/main flex flex-1 flex-col gap-2 p-4 lg:px-6">
                 {children}
               </div>

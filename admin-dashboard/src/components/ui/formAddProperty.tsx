@@ -1,512 +1,242 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { createProperty, updateProperty } from "../../lib/api/api";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import "./formAddProperty.scss";
-const TABS = [
-  "General",
-  "Location",
-  "Details",
-  "Features",
-  "Images",
-  "Contact",
-];
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Home, MapPin, FileText, Star, Camera, DollarSign } from "lucide-react";
+import PropertyImageUpload from "@/components/ui/property-image-upload";
+import PropertyFeatures from "@/components/ui/property-fetures";
 
-export default function PropertyForm({ initialData = null }) {
-  const router = useRouter();
-  //   const isEdit = Boolean(initialData?.id);
-  const [currentTab, setCurrentTab] = useState(0);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    images: [""],
-    price: "",
-    location: {
-      address: "",
-      city: "",
-      zipcode: "",
-      country: "",
-      latitude: "",
-      longitude: "",
-    },
-    category: [""],
-    bedrooms: "",
-    bathrooms: "",
-    size: {
-      squareFeet: "",
-      lotSize: "",
-    },
-    yearBuilt: "",
-    status: [""],
-    amenities: [""],
-    features: {
-      flooring: "",
-      kitchen: "",
-      heating: "",
-      parking: "",
-      view: "",
-    },
-    nearbyPlaces: [""],
-    agent: {
-      name: "",
-      phone: "",
-      email: "",
-      agency: "",
-      profileImage: "",
-    },
-    listedDate: "",
-    propertyId: "",
-    hoaFees: "",
-    utilitiesIncluded: [""],
-    mortgageCalculator: {
-      downPayment: "",
-      loanTermYears: "",
-      interestRate: "",
-      estimatedMonthlyPayment: "",
-    },
-  });
-
-  //   useEffect(() => {
-  //     if (initialData) setFormData((prev) => ({ ...prev, ...initialData }));
-  //   }, [initialData]);
-
-  const handleChange = (e: any, path = []) => {
-    const { name, value } = e.target;
-    setFormData((prev) => {
-      const updated = { ...prev };
-      let ref = updated;
-      for (let i = 0; i < path.length; i++) {
-        ref = ref[path[i]];
-      }
-      //   ref[name] = value;
-      return updated;
-    });
-  };
-
-  //   const handleArrayChange = (e, field) => {
-  //     const { value } = e.target;
-  //     setFormData((prev) => ({ ...prev, [field]: value.split(",") }));
-  //   };
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    try {
-      //   if (isEdit) {
-      //     await updateProperty(initialData.id, formData);
-      //   } else {
-      //     await createProperty(formData);
-      //   }
-      router.push("/property");
-    } catch (err) {
-      console.error("Error submitting form:", err);
-      alert("Submission failed");
-    }
-  };
-
-  const renderTab = () => {
-    switch (currentTab) {
-      case 0:
-        return (
-          <div className="flex flex-wrap justify-between gap-[20px] mb-4 pb-[30px]">
-            <div className="block-left w-[47%]">
-              <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative flex flex-row items-center">
-                <input
-                 
-                  name="title"
-                  required
-                  aria-invalid="false"
-                  placeholder=""
-                  id="title"
-                  type="text"
-                  className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-                />
-                <label
-                  className="cursor-text text-[--clr] inline-block z-0 text-sm mb-px font-normal text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                  htmlFor="title"
-                >
-                  Property Title
-                </label>
-              </div>
-              <div className="property-status flex flex-col gap-2 mt-4">
-                <label
-                  htmlFor="status"
-                  className="after:content-['*'] after:text-red-500"
-                >
-                  Property For :
-                </label>
-
-                <label>
-                  <input type="radio" value="rent" name="status"></input>
-                  <span>Rent</span>
-                </label>
-                <label>
-                  <input type="radio" value="sale" name="status"></input>
-                  <span>Sale</span>
-                </label>
-                <label>
-                  <input type="radio" value="both" name="status"></input>
-                  <span>Both</span>
-                </label>
-              </div>
-            </div>
-
-            <div className="block-right w-[47%] flex flex-col gap-[20px]">
-              <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative flex flex-row items-center">
-                <input
-                  value={formData.price}
-                  name="price"
-                  required
-                  aria-invalid="false"
-                  placeholder=""
-                  onChange={handleChange}
-                  id="salePrice"
-                  type="text"
-                  className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-                />
-                <label
-                  className="cursor-text text-[--clr] inline-block z-0 text-sm mb-px font-normal text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                  htmlFor="price"
-                >
-                  Sale Price
-                </label>
-              </div>
-              {/*  Property Type Select  */}
-              <Select>
-                <SelectTrigger className="w-full p-[20px_20px] rounded-[10px]">
-                  <SelectValue className="" placeholder="Property Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {/* <SelectLabel></SelectLabel> */}
-                    <SelectItem value="Condo">Condo</SelectItem>
-                    <SelectItem value="Apartment">Apartment</SelectItem>
-                    <SelectItem value="House">House</SelectItem>
-                    <SelectItem value="villa">Villa</SelectItem>
-                    <SelectItem value="land">Land</SelectItem>
-                    <SelectItem value="flatHouse">Flat House</SelectItem>
-                    <SelectItem value="offices">Offices</SelectItem>
-                    <SelectItem value="hotel">Hotel</SelectItem>
-                    <SelectItem value="resort">Resort</SelectItem>
-                    <SelectItem value="restaurant">Restaurant</SelectItem>
-                    <SelectItem value="Studio">Studio</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {/* Property Status */}
-              <Select>
-                <SelectTrigger className="w-full p-[20px_20px] rounded-[10px]">
-                  <SelectValue className="" placeholder="Property Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {/* <SelectLabel></SelectLabel> */}
-                    <SelectItem value="live">Live</SelectItem>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="pendingApproval">Pending Approval</SelectItem>
-                    <SelectItem value="leased">Leased</SelectItem>
-                    <SelectItem value="sold">Sold</SelectItem>
-                   
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative w-full flex flex-row items-center">
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Description"
-                className="peer text-black dark:text-white p-4 h-[200px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full  block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 outline-0 focus-visible:outline-0 focus-visible:border-black focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-              ></textarea>
-            </div>
-          </div>
-        );
-      case 1:
-        return (
-          <div className="flex flex-wrap justify-between gap-[20px] gap-y-[35px] pb-[30px]">
-            <div className="[--clr:#1f1f1f] w-[47%] dark:[--clr:#999999] relative flex flex-row items-center">
-              <input
-                name="address"
-                required
-                aria-invalid="false"
-                placeholder=""
-                type="text"
-                className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-              />
-              <label
-                className="cursor-text text-[--clr] inline-block z-0 text-sm mb-px font-normal text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                htmlFor="title"
-              >
-                Property
-              </label>
-            </div>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="flex w-full justify-between flex-wrap">
-            <div className="left-block w-[48%] flex flex-col gap-y-[35px] flex-wrap">
-              <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative flex flex-row items-center">
-                <input
-                  value=""
-                  name="bedrooms"
-                  required
-                  aria-invalid="false"
-                  placeholder=""
-                  id="title"
-                  type="text"
-                  className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-                />
-                <label
-                  className="cursor-text  text-[16px] text-[--clr] inline-block z-0 text-sm mb-px  text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                  htmlFor="title"
-                >
-                  Bedroom
-                </label>
-              </div>
-              {/* Squre Feet  */}
-              <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative flex flex-row items-center">
-                <input
-                  value=""
-                  name="squarefeet"
-                  required
-                  aria-invalid="false"
-                  placeholder=""
-                  type="text"
-                  className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-                />
-                <label
-                  className="cursor-text  text-[16px] text-[--clr] inline-block z-0 text-sm mb-px  text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                  htmlFor="title"
-                >
-                  Square Feet
-                </label>
-              </div>
-
-              {/*  Year Build */}
-              <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative flex flex-row items-center">
-                <input
-                  value=""
-                  name="yearbuild"
-                  required
-                  aria-invalid="false"
-                  placeholder=""
-                  type="number"
-                  className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-                />
-                <label
-                  className="cursor-text  text-[16px] text-[--clr] inline-block z-0 text-sm mb-px  text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                  htmlFor="title"
-                >
-                  Year Build
-                </label>
-              </div>
-            </div>
-            <div className="right-block w-[48%] flex flex-col gap-y-[35px] flex-wrap">
-              <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative flex flex-row items-center">
-                <input
-                  value=""
-                  name="bethroom"
-                  required
-                  aria-invalid="false"
-                  placeholder=""
-                  id="bathroom"
-                  type="text"
-                  className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-                />
-                <label
-                  className="cursor-text  text-[16px] text-[--clr] inline-block z-0 text-sm mb-px  text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                  htmlFor="title"
-                >
-                  Bathroom
-                </label>
-              </div>
-              {/*  Lot Size */}
-              <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative flex flex-row items-center">
-                <input
-                  value=""
-                  name="lotsize"
-                  required
-                  aria-invalid="false"
-                  placeholder=""
-                  type="text"
-                  className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-                />
-                <label
-                  className="cursor-text  text-[16px] text-[--clr] inline-block z-0 text-sm mb-px  text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                  htmlFor="title"
-                >
-                  Lot Size
-                </label>
-              </div>
-              {/* Parking */}
-              <div className="[--clr:#1f1f1f] dark:[--clr:#999999] relative flex flex-row items-center">
-                <input
-                  value=""
-                  name="parking"
-                  required
-                  aria-invalid="false"
-                  placeholder=""
-                  type="number"
-                  className="peer text-black dark:text-white pl-2 h-[40px] min-h-[40px] pr-[40px] leading-normal appearance-none resize-none box-border text-base w-full block text-left border border-solid bg-white dark:bg-zinc-800 rounded-[10px] m-0 p-0 outline-0 focus-visible:outline-0 focus-visible:border-teal-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#71717a2e] dark:focus-visible:ring-[#14b8a61a]"
-                />
-                <label
-                  className="cursor-text  text-[16px] text-[--clr] inline-block z-0 text-sm mb-px  text-start select-none absolute duration-300 transform origin-[0] translate-x-[32px] peer-focus-visible:text-teal-500 peer-focus-visible:translate-x-[8px] peer-[:not(:placeholder-shown)]:translate-x-[8px] peer-focus-visible:translate-y-[-36px] peer-[:not(:placeholder-shown)]:translate-y-[-36px] peer-[:not(:placeholder-shown)]:text-[-36px]"
-                  htmlFor="title"
-                >
-                  Parking
-                </label>
-              </div>
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <>
-            {Object.entries(formData.features).map(([key, val]) => (
-              <input
-                key={key}
-                name={key}
-                value={val}
-                // onChange={(e) => handleChange(e, ["features"])}
-                placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                className="w-full border p-2"
-              />
-            ))}
-            <input
-              name="amenities"
-              value={formData.amenities.join(",")}
-              //   onChange={(e) => handleArrayChange(e, "amenities")}
-              placeholder="Amenities (comma separated)"
-              className="w-full border p-2"
-            />
-            <input
-              name="nearbyPlaces"
-              value={formData.nearbyPlaces.join(",")}
-              //   onChange={(e) => handleArrayChange(e, "nearbyPlaces")}
-              placeholder="Nearby Places (comma separated)"
-              className="w-full border p-2"
-            />
-          </>
-        );
-      case 4:
-        return (
-          <>
-            {Object.entries(formData.agent).map(([key, val]) => (
-              <input
-                key={key}
-                name={key}
-                value={val}
-                // onChange={(e) => handleChange(e, ["agent"])}
-                placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                className="w-full border p-2"
-              />
-            ))}
-            <input
-              name="listedDate"
-              value={formData.listedDate}
-              onChange={handleChange}
-              placeholder="Listed Date"
-              className="w-full border p-2"
-            />
-            <input
-              name="propertyId"
-              value={formData.propertyId}
-              onChange={handleChange}
-              placeholder="Property ID"
-              className="w-full border p-2"
-            />
-            <input
-              name="hoaFees"
-              value={formData.hoaFees}
-              onChange={handleChange}
-              placeholder="HOA Fees"
-              className="w-full border p-2"
-            />
-            <input
-              name="utilitiesIncluded"
-              value={formData.utilitiesIncluded.join(",")}
-              //   onChange={(e) => handleArrayChange(e, "utilitiesIncluded")}
-              placeholder="Utilities Included (comma separated)"
-              className="w-full border p-2"
-            />
-          </>
-        );
-      case 5:
-        return (
-          <>
-            {Object.entries(formData.mortgageCalculator).map(([key, val]) => (
-              <input
-                key={key}
-                name={key}
-                value={val}
-                // onChange={(e) => handleChange(e, ["mortgageCalculator"])}
-                placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                className="w-full border p-2"
-              />
-            ))}
-          </>
-        );
-    }
-  };
+export default function PropertyRegistrationForm() {
+  const [propertyFor, setPropertyFor] = useState("rent");
+  const [activeTab, setActiveTab] = useState("general");
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto space-y-4">
-      <div className="flex gap-2 mb-[50px]">
-        {TABS.map((tab, idx) => (
-          <button
-            type="button"
-            key={tab}
-            onClick={() => setCurrentTab(idx)}
-            className={`px-3 py-1 rounded ${
-              idx === currentTab ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+    <div className="bg-gradient-to-br from-slate-50 to-slate-100 ">
+      <div className="mx-auto w-full">
+        <Card className="shadow-xl border-0">
+          <CardContent className="p-0">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-5 rounded-none border-b bg-slate-50">
+                <TabsTrigger
+                  value="general"
+                  className="flex items-center gap-2 data-[state=active]:bg-white"
+                >
+                  <Home className="h-4 w-4" />
+                  <span className="hidden sm:inline">General</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="location"
+                  className="flex items-center gap-2 data-[state=active]:bg-white"
+                >
+                  <MapPin className="h-4 w-4" />
+                  <span className="hidden sm:inline">Location</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="features"
+                  className="flex items-center gap-2 data-[state=active]:bg-white"
+                >
+                  <Star className="h-4 w-4" />
+                  <span className="hidden sm:inline">Features</span>
+                </TabsTrigger>
+                <TabsTrigger
+                  value="images"
+                  className="flex items-center gap-2 data-[state=active]:bg-white"
+                >
+                  <Camera className="h-4 w-4" />
+                  <span className="hidden sm:inline">Images</span>
+                </TabsTrigger>
+              </TabsList>
 
-      <div className="space-y-2">{renderTab()}</div>
+              <TabsContent value="general" className="p-6 space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="property-title"
+                      className="text-sm font-medium text-slate-700"
+                    >
+                      Property Title *
+                    </Label>
+                    <Input
+                      id="property-title"
+                      placeholder="Enter property title"
+                      className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
 
-      <div className="flex justify-between mt-4">
-        <button
-          type="button"
-          disabled={currentTab === 0}
-          onClick={() => setCurrentTab((prev) => prev - 1)}
-          className="bg-gray-300 px-4 py-2 rounded"
-        >
-          Back
-        </button>
-        {currentTab === TABS.length - 1 ? (
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded"
-          >
-            {/* {isEdit ? "Update Property" : "Create Property"} */}
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setCurrentTab((prev) => prev + 1)}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Next
-          </button>
-        )}
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="sale-price"
+                      className="text-sm font-medium text-slate-700 flex items-center gap-2"
+                    >
+                      <DollarSign className="h-4 w-4" />
+                      Sale Price *
+                    </Label>
+                    <Input
+                      id="sale-price"
+                      placeholder="Enter price"
+                      type="number"
+                      className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Property For *
+                    </Label>
+                    <RadioGroup
+                      value={propertyFor}
+                      onValueChange={setPropertyFor}
+                      className="flex gap-6"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="rent" id="rent" />
+                        <Label htmlFor="rent" className="cursor-pointer">
+                          Rent
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="sale" id="sale" />
+                        <Label htmlFor="sale" className="cursor-pointer">
+                          Sale
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="both" id="both" />
+                        <Label htmlFor="both" className="cursor-pointer">
+                          Both
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-slate-700">
+                        Property Type *
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500">
+                          <SelectValue placeholder="Select property type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="apartment">Apartment</SelectItem>
+                          <SelectItem value="house">House</SelectItem>
+                          <SelectItem value="villa">Villa</SelectItem>
+                          <SelectItem value="condo">Condo</SelectItem>
+                          <SelectItem value="townhouse">Townhouse</SelectItem>
+                          <SelectItem value="commercial">Commercial</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Property Status *
+                    </Label>
+                    <Select>
+                      <SelectTrigger className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="available">Available</SelectItem>
+                        <SelectItem value="sold">Sold</SelectItem>
+                        <SelectItem value="rented">Rented</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="under-construction">
+                          Under Construction
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-end">
+                    <Badge variant="secondary" className="h-fit">
+                      Step 1 of 5
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="description"
+                    className="text-sm font-medium text-slate-700"
+                  >
+                    Property Description *
+                  </Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Describe your property in detail..."
+                    className="min-h-[120px] border-slate-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
+                  />
+                  <p className="text-xs text-slate-500">
+                    Minimum 50 characters recommended
+                  </p>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="location" className="p-6">
+                <div className="flex items-center justify-center h-64 text-slate-500">
+                  <div className="text-center">
+                    <MapPin className="h-12 w-12 mx-auto mb-4 text-slate-400" />
+                    <p>Location details will be configured here</p>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="features" className="p-6">
+                <PropertyFeatures />
+              </TabsContent>
+
+              <TabsContent value="images" className="p-6">
+                <PropertyImageUpload />
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+
+          <div className="flex items-center justify-between p-6 bg-slate-50 rounded-b-lg border-t">
+            <Button variant="outline" className="px-8">
+              Back
+            </Button>
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-slate-600">
+                Save progress automatically
+              </span>
+              <Button className="px-8 bg-blue-600 hover:bg-blue-700">
+                Next Step
+              </Button>
+            </div>
+          </div>
+        </Card>
       </div>
-    </form>
+    </div>
   );
 }

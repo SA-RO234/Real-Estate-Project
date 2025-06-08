@@ -1,12 +1,12 @@
-import PropertyForm from "@/components/ui/formAddProperty";
-import React from "react";
-
-const add = () => {
+import React from 'react'
+import PropertyRegistrationForm from '@/components/ui/formAddProperty'
+const Page = () => {
   return (
-    <>
-      <PropertyForm />
-    </>
+    <div className="">
+      <h1 className="text-3xl font-bold pb-5 ">Register Property</h1>
+      <PropertyRegistrationForm />
+    </div>
   );
-};
+}
 
-export default add;
+export default Page
