@@ -27,7 +27,13 @@ RUN curl -sS https://getcomposer.org/installer | php \
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy all application files (including .env if not in .dockerignore)
+# Copy only composer files first to leverage Docker cache
+COPY --chown=www-data:www-data composer.json composer.lock ./
+
+# Install dependencies (show full error output)
+RUN COMPOSER_ALLOW_SUPERUSER=1 php -d memory_limit=-1 /usr/local/bin/composer install
+
+# Now copy the rest of the app
 COPY --chown=www-data:www-data . .
 
 # If .env is in .dockerignore, uncomment the next line:
