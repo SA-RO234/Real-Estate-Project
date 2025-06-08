@@ -30,7 +30,7 @@ WORKDIR /var/www/html
 # Copy all application files (including .env if not in .dockerignore)
 COPY --chown=www-data:www-data . .
 
-# Copy .env file if not already copied
+# If .env is in .dockerignore, uncomment the next line:
 COPY --chown=www-data:www-data .env /var/www/html/.env
 
 # Install dependencies as root user (default)
