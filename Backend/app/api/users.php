@@ -38,7 +38,7 @@ $routes = [
                     'message' => "Login Successfuly",
                     'session_id' => session_id(), // Send session ID
                     'user' => $user
-                    
+
                 ]);
             } else {
 
@@ -80,7 +80,6 @@ $routes = [
             return;
         }
         $id = $_GET['id'];
-        echo $id;
         $usersController->updateUser($id, $input);
     },
 
