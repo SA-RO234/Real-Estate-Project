@@ -30,8 +30,8 @@ WORKDIR /var/www/html
 # Copy all application files (including .env if not in .dockerignore)
 COPY --chown=www-data:www-data . .
 
-# If .env is in .dockerignore, uncomment the next line:
-# COPY --chown=www-data:www-data .env /var/www/html/.env
+# Copy .env file if not already copied
+COPY --chown=www-data:www-data .env /var/www/html/.env
 
 # Install dependencies as root user (default)
 RUN COMPOSER_ALLOW_SUPERUSER=1 php -d memory_limit=-1 /usr/local/bin/composer install --no-interaction --no-scripts --optimize-autoloader --verbose
