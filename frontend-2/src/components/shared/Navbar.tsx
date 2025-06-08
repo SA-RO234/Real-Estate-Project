@@ -97,8 +97,10 @@ const Navbar = ({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storeUser = localStorage.getItem("user");
+      
       if (storeUser && storeUser !== "undefined" && storeUser !== "null") {
         setUser(JSON.parse(storeUser));
+
       } else {
         setUser(null);
       }

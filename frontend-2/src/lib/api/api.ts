@@ -1,6 +1,6 @@
 export const fetchProperties = async (page: number = 1, limit: number = 4) => {
   const response = await fetch(
-    `http://localhost:3000/app/api/properties.php?page=${page}&limit=${limit}`
+    `http://localhost:3000/app/api/index.php?page=${page}&limit=${limit}`
   );
   const data = await response.json();
   const totalItems = response.headers.get("X-Total-Count")
@@ -20,7 +20,7 @@ export const fetchProperties = async (page: number = 1, limit: number = 4) => {
 
 //  Fetch ALl Property
 export const fetchAllProperties = async () => {
-  const response = await fetch(`http://localhost:3000/app/api/properties.php`);
+  const response = await fetch(`http://localhost:3000/app/api/index.php`);
   const data = await response.json();
   return {
     data,
@@ -30,7 +30,7 @@ export const fetchAllProperties = async () => {
 //  Fetch Property for Ad
 export const fetchPropertyForAd = async () => {
   const response = await fetch(
-    `http://localhost:3000/app/api/properties.php?ads`
+    `http://localhost:3000/app/api/index.php?ads`
   );
   const data = await response.json();
   return data;
@@ -45,7 +45,7 @@ export const fetchPropertyById = async (id: string) => {
 };
 
 // New============================================
-const API_URL = "http://localhost:3000/app/api/properties.php";
+const API_URL = "http://localhost:3000/app/api/index.php";
 
 export async function getProperty(id: number) {
   const res = await fetch(`${API_URL}/properties/${id}`);
@@ -96,7 +96,7 @@ export async function deleteProperty(id: number) {
 //  ============================================
 export const fetchPropertyByCategory = async () => {
   const response = await fetch(
-    "http://localhost:3000/app/api/properties.php?typeCount"
+    "http://localhost:3000/app/api/index.php?typeCount"
   );
   const data = await response.json();
   return data;
@@ -105,7 +105,7 @@ export const fetchPropertyByCategory = async () => {
 // get Number of Each Propety in City
 export const fetchPropertyOfEachCity = async () => {
   const response = await fetch(
-    "http://localhost:3000/app/api/properties.php?byCity"
+    "http://localhost:3000/app/api/index.php?byCity"
   );
   const data = await response.json();
   return data;

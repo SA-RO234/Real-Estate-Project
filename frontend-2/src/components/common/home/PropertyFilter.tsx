@@ -74,7 +74,7 @@ const PropertyFilter: React.FC<PropertyFilterProps> = ({ setSearchResults }) => 
   
   const { mutate, isPending } = useMutation({
     mutationFn: async (payload: ApiFilterPayload) => {
-      const response = await fetch("http://localhost:3000/app/api/properties.php",{
+      const response = await fetch("http://localhost:3000/app/api/index.php",{
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -115,7 +115,7 @@ const PropertyFilter: React.FC<PropertyFilterProps> = ({ setSearchResults }) => 
     const fetchPropertyTypes = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/app/api/properties.php?allpropertiestype"
+          "http://localhost:3000/app/api/index.php?allpropertiestype"
         );
         if (!response.ok) throw new Error("Failed to fetch property types");
         const data = await response.json();
@@ -132,7 +132,7 @@ const PropertyFilter: React.FC<PropertyFilterProps> = ({ setSearchResults }) => 
     const fetchPropertyCities = async () => {
       try {
         const response = await fetch(
-          "http://localhost:3000/app/api/properties.php?allcities"
+          "http://localhost:3000/app/api/index.php?allcities"
         );
         if (!response.ok) throw new Error("Failed to fetch property cities");
         const data = await response.json();
