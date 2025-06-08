@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . "../../models/UserModel.php";
 require "../../config/database.php";
-header("Content-Type :application/json");
+header("Content-Type: application/json");
 class UserController
 {
     private $userModel;
