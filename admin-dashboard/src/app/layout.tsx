@@ -1,4 +1,6 @@
-import React, { ReactNode } from "react";
+"use client";
+import React, { ReactNode, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { AppSidebar } from "@/components/admin/app-sidebar";
 import "./globals.css";
 import { SiteHeader } from "@/components/admin/site-header";
@@ -8,6 +10,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [isUser, setUser] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const sessionId = localStorage.getItem("adminsession_id");
+    // Only redirect if NOT on /login
+    if (!sessionId && pathname !== "/login") {
+      window.location.href = "/login";
+    } else if (sessionId) {
+      setUser(true);
+    }
+  }, [pathname]);
+
   return (
     <html lang="en">
       <head>
@@ -16,9 +31,9 @@ export default function RootLayout({
       </head>
       <body className="">
         <SidebarProvider>
-          {/* <AppSidebar variant="inset" /> */}
+          {isUser ? <AppSidebar variant="inset" /> : null}
           <SidebarInset>
-            {/* <SiteHeader /> */}
+            {isUser ? <SiteHeader /> : null}
             <div className="flex flex-1 flex-col bg-white">
               <div className="@container/main flex flex-1 flex-col gap-2 p-4 lg:px-6">
                 {children}

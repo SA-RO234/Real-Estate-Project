@@ -5,20 +5,56 @@ import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail } from "lucide-react";
 import { cn } from "@/app/lib/utils/utils";
+import axios from "axios";
+import Lottie from "lottie-react";
+import animationData from "@/assets/Unlock.json";
+
 export default function AdminLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
+  const [isUnlocking, setIsUnlocking] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log({ email, password, rememberMe });
+    try {
+      const response = await axios.post(
+        "https://real-estate-clientside2.onrender.com/users",
+        {
+          email,
+          password,
+        }
+      );
+      if (response.data.session_id) {
+        setIsUnlocking(true);
+        setTimeout(() => {
+          localStorage.setItem("adminsession_id", response.data.session_id);
+          localStorage.setItem("admin", JSON.stringify(response.data.user));
+          window.location.href = "/";
+        }, 1500); // Show animation for 1.5 seconds
+      } else {
+        setError(response.data.message);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("An error occurred. Please try again.");
+    }
   };
+
+  if (isUnlocking) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Lottie
+          animationData={animationData}
+          style={{ width: 300, height: 300 }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex justify-center items-center z-[1000] h-full bg-white">
       <div className="w-[70%] h-[600px] overflow-hidden flex justify-center gap-5 items-center  m-auto bg-gray-200 shadow p-[10px] rounded-[50px] ">

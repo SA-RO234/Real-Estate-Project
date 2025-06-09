@@ -24,37 +24,37 @@ export default function Messages() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [groupedMessages, setGroupedMessages] = useState<Message[]>([]);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost/Real-Estate-Management/Backend/app/api/messages.php?action=admin-get-messages&sender_id=${sender_id}&receiver_id=${receiver_id}`
-        );
-        setMessages(response.data);
+  // useEffect(() => {
+  //   const fetchMessages = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `https://real-estate-clientside2.onrender.com/messages?action=admin-get-messages&sender_id=${sender_id}&receiver_id=${receiver_id}`
+  //       );
+  //       setMessages(response.data);
 
-        // Group messages by sender and keep the latest message
-        const grouped = Object.values(
-          response.data.reduce(
-            (acc: Record<string, Message>, message: Message) => {
-              if (
-                !acc[message.sender_name] ||
-                new Date(message.send_at) >
-                  new Date(acc[message.sender_name].send_at)
-              ) {
-                acc[message.sender_name] = message;
-              }
-              return acc;
-            },
-            {}
-          )
-        ) as Message[];
-        setGroupedMessages(grouped);
-      } catch (error) {
-        console.error("Failed to fetch messages:", error);
-      }
-    };
-    fetchMessages();
-  }, [receiver_id, sender_id]);
+  //       // Group messages by sender and keep the latest message
+  //       const grouped = Object.values(
+  //         response.data.reduce(
+  //           (acc: Record<string, Message>, message: Message) => {
+  //             if (
+  //               !acc[message.sender_name] ||
+  //               new Date(message.send_at) >
+  //                 new Date(acc[message.sender_name].send_at)
+  //             ) {
+  //               acc[message.sender_name] = message;
+  //             }
+  //             return acc;
+  //           },
+  //           {}
+  //         )
+  //       ) as Message[];
+  //       setGroupedMessages(grouped);
+  //     } catch (error) {
+  //       console.error("Failed to fetch messages:", error);
+  //     }
+  //   };
+  //   fetchMessages();
+  // }, [receiver_id, sender_id]);
   
   return (
     <div className="w-[100%] bg-white border-black border-5 rounded-lg shadow-sm p-4">

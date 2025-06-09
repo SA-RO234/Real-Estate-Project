@@ -11,7 +11,6 @@ interface User {
   status: boolean;
   create_at: string;
 }
-
 const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   useEffect(()=>{
@@ -20,7 +19,6 @@ const UsersPage = () => {
           const response = await axios.get(
             "https://real-estate-clientside2.onrender.com/users?role=buyer"
           );
-          
           setUsers(response.data);
         } catch (error) {
           console.error("Failed to fetch users: ",error);
@@ -28,7 +26,6 @@ const UsersPage = () => {
       }
       fetchuser();
   },[]);
-
   return (
     <div>
       <h2 className="text-3xl font-semibold pb-[20px] tracking-tight transition-colors">
