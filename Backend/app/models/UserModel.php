@@ -2,16 +2,21 @@
 require_once __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->load();
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-class User{
+
+class User
+{
     private $conn;
-    public function __construct($database){
+    public function __construct($database)
+    {
         $this->conn = $database;
     }
 
     //  get All users
-    public function getAllUsers(){
+    public function getAllUsers()
+    {
         $sql = "SELECT * FROM users";
         $result = $this->conn->query($sql);
         return $result->fetchAll(PDO::FETCH_ASSOC);
@@ -27,12 +32,13 @@ class User{
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     // Register  user model
-    public function register($name, $email, $phone , $role, $password){
+    public function register($name, $email, $phone, $role, $password)
+    {
         try {
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
             $sql = "INSERT INTO users (name, email, password, phone , role) VALUES (:name, :email, :password,:phone ,:role)";
             $stmt = $this->conn->prepare($sql);
-            
+
             return $stmt->execute([
                 ':name' => $name,
                 ':email' => $email,
@@ -43,22 +49,36 @@ class User{
         } catch (PDOException $e) {
             return $e->getMessage();
         }
-       
     }
 
     //  Login method
-    public function login($email, $password) {
+    public function login($email, $password)
+    {
         try {
             $sql = "SELECT * FROM users WHERE email = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-            // Check if user exists and verify the password
-            if ($user && password_verify($password, $user['password'])) {
-                return $user; // Return user data to the controller
+
+            if ($user) {
+                $storedPassword = $user['password'];
+                // If already hashed, use password_verify
+                if (strpos($storedPassword, '$2y$') === 0) {
+                    if (password_verify($password, $storedPassword)) {
+                        return $user;
+                    }
+                } else {
+                    // If plain text and matches, hash it and update in DB
+                    if ($storedPassword === $password) {
+                        $hashed = password_hash($password, PASSWORD_BCRYPT);
+                        $update = $this->conn->prepare("UPDATE users SET password = :password WHERE id = :id");
+                        $update->execute([':password' => $hashed, ':id' => $user['id']]);
+                        // Update user array to reflect new hash
+                        $user['password'] = $hashed;
+                        return $user;
+                    }
+                }
             }
-    
             // Return false if login fails
             return false;
         } catch (PDOException $e) {
@@ -68,13 +88,15 @@ class User{
     }
 
     // Logout User
-    public function logout(){
+    public function logout()
+    {
         session_start();
         session_destroy();
     }
 
     //  update model
-    public function updateUserByID($id, $data){
+    public function updateUserByID($id, $data)
+    {
         try {
             $fields = [];
             $params = [];
@@ -109,7 +131,8 @@ class User{
     }
 
     //  Delete model
-    function DeleteUser($id){
+    function DeleteUser($id)
+    {
         $stmt = $this->conn->prepare("DELETE FROM users WHERE id = ?");
         $stmt->bindParam(1, $id, PDO::PARAM_INT);
         $stmt->execute();
@@ -124,8 +147,8 @@ class User{
         $stmt->execute([':email' => $email]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    
-  
+
+
 
     // Send email to admin (simple version)
     public function sendEmailToAdmin($fromEmail, $messageBody, $subject = '', $name = '', $phone = '')
@@ -153,7 +176,7 @@ class User{
             $mail->isHTML(false);
 
             $mail->send();
-         
+
             return true;
         } catch (Exception $e) {
             // For debugging, return error info
@@ -225,4 +248,3 @@ class User{
         return $stmt->execute([':token' => $token, ':email' => $email]);
     }
 }
-

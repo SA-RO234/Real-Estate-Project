@@ -77,3 +77,30 @@ if (array_key_exists($method, $routes)) {
 } else {
     echo json_encode(["message" => "Invalid HTTP Method ! "]);
 }
+
+// Utility: Convert all plain text passwords to hashed passwords
+function convertPlainPasswordsToHash()
+{
+    require_once __DIR__ . "/../../config/database.php";
+    $database = new Database();
+    $db = $database->getConnection();
+
+    $stmt = $db->query("SELECT id, password FROM users");
+    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($users as $user) {
+        $current = $user['password'];
+        // If already hashed (starts with $2y$), skip
+        if (strpos($current, '$2y$') === 0) continue;
+        $hashed = password_hash($current, PASSWORD_BCRYPT);
+        $update = $db->prepare("UPDATE users SET password = :password WHERE id = :id");
+        $update->execute([':password' => $hashed, ':id' => $user['id']]);
+    }
+    echo json_encode(["message" => "Password conversion completed."]);
+}
+
+// Example usage: call this function by visiting /app/api/index.php?convert_passwords=1
+if (isset($_GET['convert_passwords']) && $_GET['convert_passwords'] == 1) {
+    convertPlainPasswordsToHash();
+    exit();
+}

@@ -51,7 +51,7 @@ $routes = [
 
                 echo json_encode(['message' => 'Invalid email or password.']);
             }
-        } else if (
+        } elseif (
             isset($input['name']) &&
             isset($input['email']) &&
             isset($input['phone']) &&
