@@ -95,7 +95,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     alt: "logo",
   };
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar  collapsible="offcanvas" {...props}>
       <SidebarMenu className="w-[100px]  h-[100px]">
         <a href={Navbar.url} className="h-[100%] w-[100%]">
           <img src={Navbar.src} alt="" className="w-full" />

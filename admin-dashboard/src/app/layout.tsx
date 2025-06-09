@@ -3,7 +3,6 @@ import { AppSidebar } from "@/components/admin/app-sidebar";
 import "./globals.css";
 import { SiteHeader } from "@/components/admin/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
 export default function RootLayout({
   children,
 }: {
@@ -12,15 +11,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Kenh Pteas Huey|| Admin Dashboard</title>
-        <link rel="icon" href="../../public/assets/favicon.ico" />
-      
+        <title>Admin Dashboard</title>
+        <link rel="icon" href="/assets/favicon.ico" />
       </head>
       <body className="">
         <SidebarProvider>
-          <AppSidebar variant="inset" />
+          {/* <AppSidebar variant="inset" /> */}
           <SidebarInset>
-            <SiteHeader />
+            {/* <SiteHeader /> */}
             <div className="flex flex-1 flex-col bg-white">
               <div className="@container/main flex flex-1 flex-col gap-2 p-4 lg:px-6">
                 {children}
