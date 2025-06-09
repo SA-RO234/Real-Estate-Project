@@ -25,7 +25,7 @@ export default function UserTable({users}:any) {
   };
 
   return (
-    <Card className="shadow-md">
+    <Card className="shadow-md border">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>

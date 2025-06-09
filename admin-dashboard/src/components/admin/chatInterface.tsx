@@ -1,84 +1,92 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Search, Settings, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/app/lib/utils/utils";
-import axios from "axios";
-const AdminID = 13;
-const ChatInterface = ({ ClientID }: { ClientID: number }) => {
-  const [conversations, setConversations] = useState<any[]>([]); // Ensure initial state is an array
-  const [activeChat, setActiveChat] = useState<any>(null);
+
+// Dummy data for UI preview
+const DUMMY_CONVERSATIONS = [
+  {
+    id: 1,
+    name: "John Doe",
+    avatar: "/assets/logo.png",
+    isActive: true,
+    time: "10:30 AM",
+    lastMessage: "See you soon!",
+    messages: [
+      {
+        id: 1,
+        sender_role: "buyer",
+        content: "Hello, I need more info.",
+        time: "10:00 AM",
+        avatar: "/assets/logo.png",
+      },
+      {
+        id: 2,
+        sender_role: "admin",
+        content: "Sure! What would you like to know?",
+        time: "10:01 AM",
+        avatar: "/assets/favicon.ico",
+      },
+      {
+        id: 3,
+        sender_role: "buyer",
+        content: "Is the property still available?",
+        time: "10:02 AM",
+        avatar: "/assets/logo.png",
+      },
+      {
+        id: 4,
+        sender_role: "admin",
+        content: "Yes, it is available.",
+        time: "10:03 AM",
+        avatar: "/assets/favicon.ico",
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    avatar: "/assets/logo.png",
+    isActive: false,
+    time: "Yesterday",
+    lastMessage: "Thank you!",
+    messages: [
+      {
+        id: 1,
+        sender_role: "buyer",
+        content: "Can I schedule a visit?",
+        time: "Yesterday",
+        avatar: "/assets/logo.png",
+      },
+      {
+        id: 2,
+        sender_role: "admin",
+        content: "Of course! Let me know your preferred time.",
+        time: "Yesterday",
+        avatar: "/assets/favicon.ico",
+      },
+    ],
+  },
+];
+
+const ChatInterface = () => {
+  const [conversations] = useState(DUMMY_CONVERSATIONS);
+  const [activeChat, setActiveChat] = useState(DUMMY_CONVERSATIONS[0]);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/app/api/messages.php?admin_id=${AdminID}&client_id=${ClientID}`
-        );
-        // console.log("API Response:", response.data);
-
-        if (response.data.success && response.data.data) {
-          const conversation = response.data.data;
-
-          // Convert messages object to an array
-          const messagesArray = Object.values(conversation.messages);
-
-          // Update the conversation object with the messages array
-          const updatedConversation = {
-            ...conversation,
-            messages: messagesArray,
-          };
-
-          setConversations([updatedConversation]); // Wrap in an array
-          setActiveChat(updatedConversation); // Set as the active chat
-        } else {
-          console.error("Unexpected API response format:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching conversations:", error);
-      }
-    };
-    fetchConversations();
-  }, [ClientID]);
   const handleConversationClick = (conversation: any) => {
     setActiveChat(conversation);
   };
-  const handleSendMessage = async () => {
-    if (!message.trim()) return;
 
-    try {
-      const newMessage = {
-        id: Date.now(),
-        sender_role: "admin",
-        content: message,
-        time: new Date().toLocaleTimeString(),
-        avatar: activeChat?.avatar,
-      };
-
-      setActiveChat((prev: any) => ({
-        ...prev,
-        messages: [...(prev?.messages || []), newMessage], // Ensure messages array exists
-      }));
-
-      setMessage("");
-
-      await axios.post("http://localhost:3000/app/api/sendMessage.php", {
-        admin_id: AdminID,
-        client_id: ClientID,
-        content: message,
-      });
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
+  const handleSendMessage = () => {
+    setMessage("");
   };
 
-  // console.log(activeChat);
-
   return (
-    <div className="flex w-full h-full bg-white">
+    <div className="flex w-full h-full">
       {/* Left sidebar - Conversation list */}
       <div className="w-80 border-r flex flex-col">
         <div className="p-3 border-b">
@@ -169,10 +177,10 @@ const ChatInterface = ({ ClientID }: { ClientID: number }) => {
               key={msg.id}
               className={cn(
                 "flex gap-3",
-                msg.sender_role === "admin" && "justify-end" // Admin messages on the right
+                msg.sender_role === "admin" && "justify-end"
               )}
             >
-              {msg.sender_role === "buyer" && ( // Client avatar on the left
+              {msg.sender_role === "buyer" && (
                 <Avatar className="h-8 w-8 mt-1">
                   <img
                     src={msg.avatar}
@@ -184,15 +192,15 @@ const ChatInterface = ({ ClientID }: { ClientID: number }) => {
               <div
                 className={cn(
                   "max-w-[70%] space-y-1",
-                  msg.sender_role === "admin" && "order-1" // Admin messages on the right
+                  msg.sender_role === "admin" && "order-1"
                 )}
               >
                 <div
                   className={cn(
                     "p-3 rounded-lg",
                     msg.sender_role === "admin"
-                      ? "bg-blue-100 text-gray-800" // Admin message styling
-                      : "bg-gray-100 text-gray-800" // Client message styling
+                      ? "bg-blue-100 text-gray-800"
+                      : "bg-gray-100 text-gray-800"
                   )}
                 >
                   <p>{msg.content}</p>
@@ -200,13 +208,13 @@ const ChatInterface = ({ ClientID }: { ClientID: number }) => {
                 <div
                   className={cn(
                     "text-xs text-muted-foreground",
-                    msg.sender_role === "admin" ? "text-right" : "text-left" // Adjust timestamp alignment
+                    msg.sender_role === "admin" ? "text-right" : "text-left"
                   )}
                 >
                   {msg.time}
                 </div>
               </div>
-              {msg.sender_role === "admin" && ( // Admin avatar on the right
+              {msg.sender_role === "admin" && (
                 <Avatar className="h-8 w-8 mt-1">
                   <img
                     src={msg.avatar}

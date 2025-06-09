@@ -69,7 +69,7 @@ const data = {
       url: "/users",
       icon: UsersIcon,
       children: [
-        { title: "All Users", url: "/user", icon: List },
+        { title: "All Users", url: "/users", icon: List },
         { title: "Add User", url: "/users/add", icon: PlusCircle },
       ],
     },

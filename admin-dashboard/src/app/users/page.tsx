@@ -18,7 +18,7 @@ const UsersPage = () => {
       const fetchuser = async ()=>{
         try {
           const response = await axios.get(
-            "https://real-estate-clientside2.onrender.com?role=buyer"
+            "https://real-estate-clientside2.onrender.com/users?role=buyer"
           );
           
           setUsers(response.data);
@@ -31,7 +31,7 @@ const UsersPage = () => {
 
   return (
     <div>
-      <h2 className="text-3xl border-2 border-red-800 font-semibold pb-[20px] tracking-tight transition-colors">
+      <h2 className="text-3xl font-semibold pb-[20px] tracking-tight transition-colors">
         Customer Management
       </h2>
       <UserTable users={users} />
