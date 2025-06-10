@@ -13,11 +13,11 @@ export interface User {
 export interface UserFormData {
   name: string;
   email: string;
-  password?: string;
+  password: string;
   confirmPassword?: string;
-  phone?: string;
+  phone: string;
   role: string;
-  avatar?: string;
+  avatar: string;
   status: number;
 }
 

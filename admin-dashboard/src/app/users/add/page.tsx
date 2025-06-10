@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -23,7 +22,9 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, UserPlus, Mail, Phone, Shield } from "lucide-react";
 import type { UserFormData } from "@/app/lib/types/usersType";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Input } from "@/components/ui/input";
 interface UserRegistrationFormProps {
   onSubmit?: (userData: UserFormData) => void;
   loading?: boolean;
@@ -31,7 +32,7 @@ interface UserRegistrationFormProps {
 
 export default function UserRegistrationForm({
   onSubmit,
-  loading,
+  loading: propLoading,
 }: UserRegistrationFormProps) {
   const [formData, setFormData] = useState<UserFormData>({
     name: "",
@@ -39,7 +40,8 @@ export default function UserRegistrationForm({
     password: "",
     confirmPassword: "",
     phone: "",
-    role: "user",
+    role: "buyer",
+    avatar: "",
     status: 1,
   });
 
@@ -47,6 +49,8 @@ export default function UserRegistrationForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false); // Add this line
 
   const handleInputChange = (
     field: keyof UserFormData,
@@ -94,16 +98,69 @@ export default function UserRegistrationForm({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ...existing code...
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      onSubmit?.(formData);
+      setLoading(true); // Start loading
+      try {
+        const { confirmPassword, avatar, ...dataToSend } = formData;
+        const submitFormData = new FormData();
+        submitFormData.append("name", dataToSend.name);
+        submitFormData.append("email", dataToSend.email ?? "");
+        submitFormData.append("password", dataToSend.password ?? "");
+        submitFormData.append("phone", dataToSend.phone ?? "");
+        submitFormData.append("role", dataToSend.role ?? "");
+        if (selectedFile) {
+          submitFormData.append("avatar", selectedFile);
+        }
+
+        const response = await fetch(
+          "https://real-estate-clientside2.onrender.com/users",
+          {
+            method: "POST",
+            body: submitFormData,
+          }
+        );
+
+        const result = await response.json();
+        if (!response.ok) {
+          setErrors((prev) => ({
+            ...prev,
+            api: result.message || "Failed to create user",
+          }));
+          toast.error(result.message || "Failed to create user");
+          setLoading(false); // Stop loading on error
+          return;
+        }
+
+        // Success: Show toast and reset form
+        toast.success(result.message);
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          phone: "",
+          role: "buyer",
+          avatar: "",
+          status: 1,
+        });
+        setSelectedFile(null);
+        setAcceptTerms(false);
+        setErrors({});
+        setLoading(false); // Stop loading on success
+      } catch (error) {
+        toast.error("An error occurred. Please try again.");
+        setLoading(false); // Stop loading on error
+      }
     }
   };
 
   return (
     <div className="w-full mx-auto p-6">
+      <ToastContainer position="top-right" />
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="flex items-center justify-center gap-2 text-2xl">
@@ -115,11 +172,36 @@ export default function UserRegistrationForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Show loading message if slow */}
+          {loading && (
+            <div className="mb-4 text-blue-700 font-semibold flex items-center gap-2">
+              <svg
+                className="animate-spin h-5 w-5 text-blue-700"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8z"
+                ></path>
+              </svg>
+              Submitting, please wait...
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Basic Information</h3>
-
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name *</Label>
@@ -171,7 +253,6 @@ export default function UserRegistrationForm({
                 )}
               </div>
             </div>
-
             {/* Security */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Security</h3>
@@ -246,78 +327,70 @@ export default function UserRegistrationForm({
                 </div>
               </div>
             </div>
-
             {/* Role & Status */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Permissions</h3>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-3">
                 <div className="space-y-2">
-                  <Label htmlFor="role" className="flex items-center gap-2">
-                    <Shield className="h-4 w-4" />
-                    User Role
-                  </Label>
-                  <Select
-                    value={formData.role}
-                    onValueChange={(value) => handleInputChange("role", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select user role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="user">User</SelectItem>
-                      <SelectItem value="moderator">Moderator</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">Account Status</Label>
-                  <Select
-                    value={formData.status.toString()}
-                    onValueChange={(value) =>
-                      handleInputChange("status", Number.parseInt(value))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Active</SelectItem>
-                      <SelectItem value="0">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="photo">Photo User</Label>
+                  <Input
+                    id="photo"
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedFile(e.target.files[0]);
+                      }
+                    }}
+                    className="cursor-pointer"
+                  />
+                  {selectedFile && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Selected: {selectedFile.name}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Terms and Conditions */}
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms"
-                checked={acceptTerms}
-                onCheckedChange={(checked) => setAcceptTerms(checked === true)}
-              />
-              <Label htmlFor="terms" className="text-sm">
-                I agree to the{" "}
-                <a href="#" className="text-blue-600 hover:underline">
-                  Terms and Conditions
-                </a>{" "}
-                and{" "}
-                <a href="#" className="text-blue-600 hover:underline">
-                  Privacy Policy
-                </a>
-              </Label>
-            </div>
-            {errors.terms && (
-              <p className="text-sm text-red-500">{errors.terms}</p>
-            )}
-
-            {/* Submit Button */}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating User..." : "Create User"}
+            <Button
+              type="submit"
+              className="w-full bg-blue-700 cursor-pointer"
+              disabled={loading}
+            >
+              {loading ? (
+                <span>
+                  <svg
+                    className="animate-spin inline-block h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8z"
+                    ></path>
+                  </svg>
+                  Creating User...
+                </span>
+              ) : (
+                "Create User"
+              )}
             </Button>
+
+            {errors.api && (
+              <p className="text-sm text-red-500 mt-2">{errors.api}</p>
+            )}
           </form>
         </CardContent>
       </Card>

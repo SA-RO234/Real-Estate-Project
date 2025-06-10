@@ -38,13 +38,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useEffect, useState } from "react";
 
 const data = {
-  user: {
-    name: "NarakCODE (Admin)",
-    email: "admin@gmail.com",
-    avatar: "https://cdn-icons-png.flaticon.com/512/219/219986.png",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -82,10 +78,7 @@ const data = {
       //   { title: "Add User", url: "/users/add", icon: PlusCircle },
       // ],
     },
- 
   ],
-
-
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -94,8 +87,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     src: "https://res.cloudinary.com/dnfahcxo3/image/upload/v1745082558/9c2d1352-17cf-40b9-b71d-f6f2393ec6a0.png",
     alt: "logo",
   };
+  type UserType = {
+    name: string;
+    email: string;
+    avatar: string;
+  };
+  const [User, setUser] = useState<UserType>({
+    name: "",
+    email: "",
+    avatar: "",
+  });
+  useEffect(() => {
+    try {
+      const user = localStorage.getItem("admin");
+      if (user) {
+        setUser(JSON.parse(user));
+      }
+    } catch (error) {
+      setUser({
+        name: "",
+        email: "",
+        avatar: "",
+      });
+    }
+  }, []);
+
   return (
-    <Sidebar  collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="offcanvas" {...props}>
       <SidebarMenu className="w-[100px]  h-[100px]">
         <a href={Navbar.url} className="h-[100%] w-[100%]">
           <img src={Navbar.src} alt="" className="w-full" />
@@ -107,7 +125,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={User} />
       </SidebarFooter>
     </Sidebar>
   );

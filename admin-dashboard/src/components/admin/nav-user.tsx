@@ -24,6 +24,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 export function NavUser({
   user,
@@ -35,6 +36,15 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+ 
+
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("admin");
+      localStorage.removeItem("adminsession_id");
+    }
+    window.location.href = "/login";
+  };
 
   return (
     <SidebarMenu className="">
@@ -84,13 +94,15 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <UserCircleIcon />
-                Account
-              </DropdownMenuItem>
+              <Link href="/profile_account">
+                <DropdownMenuItem className="cursor-pointer">
+                  <UserCircleIcon />
+                  Account
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
               <LogOutIcon />
               Log out
             </DropdownMenuItem>
