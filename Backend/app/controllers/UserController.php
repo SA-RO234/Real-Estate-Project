@@ -21,7 +21,7 @@ class UserController
         }
 
         // Validate required fields
-        if (empty($data['email']) || empty($data['role']) || empty($data['phone']) || empty($data['name']) || empty($data['password'])) {
+        if (empty($data['email']) || empty($data['role']) || empty($data['phone']) || empty($data['name']) || empty($data['password']) || empty($data['avatar'])) {
             echo json_encode(["message" => "Missing required fields."]);
             return;  // Stop further execution
         }
@@ -36,7 +36,8 @@ class UserController
         $role = $data['role'];
         $phone = $data['phone'];
         $name = $data['name'];
-        $result = $this->userModel->register($name, $email, $phone, $role, $password);
+        $avatar = $data['avatar'];
+        $result = $this->userModel->register($name, $email, $phone, $role, $password,$avatar);
         // Call the model to register the user
         if ($result === true) {
             echo json_encode(["message" => "User registered successfully!"]);

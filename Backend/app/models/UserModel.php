@@ -32,11 +32,11 @@ class User
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     // Register  user model
-    public function register($name, $email, $phone, $role, $password)
+    public function register($name, $email, $phone, $role, $password,$avatar)
     {
         try {
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-            $sql = "INSERT INTO users (name, email, password, phone , role) VALUES (:name, :email, :password,:phone ,:role)";
+            $sql = "INSERT INTO users (name, email, password, phone , role, avatar) VALUES (:name, :email, :password,:phone ,:role ,:avatar)";
             $stmt = $this->conn->prepare($sql);
 
             return $stmt->execute([
@@ -44,7 +44,8 @@ class User
                 ':email' => $email,
                 ':password' => $hashedPassword,
                 ':phone' => $phone,
-                ':role' => $role
+                ':role' => $role,
+                ':avatar' => $avatar
             ]);
         } catch (PDOException $e) {
             return $e->getMessage();
