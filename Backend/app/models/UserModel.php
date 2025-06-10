@@ -247,4 +247,5 @@ class User
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':token' => $token, ':email' => $email]);
     }
+
 }

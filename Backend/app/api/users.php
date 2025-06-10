@@ -7,6 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
 require_once __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
 $dotenv->safeLoad();
@@ -89,8 +90,10 @@ $routes = [
         $id = $_GET['id'];
         $usersController->updateUser($id, $input);
     },
+    
 
 ];
 if (array_key_exists($method, $routes)) {
     $routes[$method]();
 }
+

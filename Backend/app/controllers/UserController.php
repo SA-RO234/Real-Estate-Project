@@ -83,7 +83,6 @@ class UserController
     {
 
         if (empty($data['name']) || empty($data['email']) || empty($data['role']) || empty($data['password']) || empty($data['phone'])) {
-
             echo json_encode(["message" => "Missing required fields."]);
             return;
         }
@@ -223,4 +222,5 @@ class UserController
             ]);
         }
     }
+
 }
