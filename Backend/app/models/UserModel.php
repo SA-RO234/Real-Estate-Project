@@ -120,6 +120,10 @@ class User
                 $fields[] = "password = :password";
                 $params[':password'] = password_hash($data['password'], PASSWORD_BCRYPT);
             }
+            if(isset($data['avatar'])){
+                $fields[] = "avatar = :avatar";
+                $params[':avatar'] = $data['avatar'];
+            }
             if (empty($fields)) return false;
             $params[':id'] = $id;
             $sql = "UPDATE users SET " . implode(', ', $fields) . " WHERE id = :id";
