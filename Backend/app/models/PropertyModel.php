@@ -42,8 +42,7 @@ class PropertyModel
         }
     }
 
-    public function getPropertyforAd()
-    {
+    public function getPropertyforAd(){
         try {
             $query = "SELECT p.id, p.title , p.description ,images.image_url AS ad_image_url 
                     FROM properties p 
@@ -70,12 +69,66 @@ class PropertyModel
         }
     }
 
-    //  Insert a new property into database 
-    public function addProperty($title, $description, $price, $location_id)
-    {
-        $query = "INSERT INTO properties (title, description, price, location_id) VALUES (?, ?, ?, ?)";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute([$title, $description, $price, $location_id]);
+
+    // Insert a new property into database
+    public function addProperty(
+        $title,
+        $description,
+        $price,
+        $location_id,
+        $property_for,
+        $property_type_id,
+        $user_id,
+        $bedrooms,
+        $bathrooms,
+        $square_feet,
+        $lot_size,
+        $year_built,
+        $status,
+        $listed_date,
+        $hoa_fees,
+        $features = []
+    ) {
+        try {
+            $query = "INSERT INTO properties (
+            user_id, title, description, price, location_id, property_for, property_type_id,
+            bedrooms, bathrooms, square_feet, lot_size, year_built, status, listed_date, hoa_fees
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute([
+                $user_id,
+                $title,
+                $description,
+                $price,
+                $location_id,
+                $property_for,
+                $property_type_id,
+                $bedrooms,
+                $bathrooms,
+                $square_feet,
+                $lot_size,
+                $year_built,
+                $status,
+                $listed_date,
+                $hoa_fees
+            ]);
+
+            $property_id = $this->conn->lastInsertId();
+
+            if (!empty($features)) {
+                $featureQuery = "INSERT INTO property_features (property_id, feature_id) VALUES (?, ?)";
+                $featureStmt = $this->conn->prepare($featureQuery);
+                foreach ($features as $feature_id) {
+                    $featureStmt->execute([$property_id, $feature_id]);
+                }
+            }
+
+            return true;
+        } catch (PDOException $e) {
+            error_log("Error inserting property: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Update an existing property
