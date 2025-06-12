@@ -38,7 +38,11 @@ $routes = [
         elseif (isset($input['email']) && isset($input['password'])) {
             Session::Start();
             $user =  $usersController->login($input['email'], $input['password']);
-            if ($user) {
+            if ($user && isset($user['error'])) {
+                // Send specific error message (e.g., admin login not allowed)
+                echo json_encode(['message' => $user['error']]);
+
+            }elseif($user){
                 Session::set('user_id', $user['id']);
                 Session::set('email', $user['email']);
                 //  Send session to fron-end 

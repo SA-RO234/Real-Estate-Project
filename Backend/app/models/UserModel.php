@@ -60,23 +60,25 @@ class User
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($user && $user['role'] === "buyer") {
-                $storedPassword = $user['password'];
-                // If already hashed, use password_verify
-                if (strpos($storedPassword, '$2y$') === 0) {
-                    if (password_verify($password, $storedPassword)) {
-                        return $user;
-                    }
-                } else {
-                    // If plain text and matches, hash it and update in DB
-                    if ($storedPassword === $password) {
-                        $hashed = password_hash($password, PASSWORD_BCRYPT);
-                        $update = $this->conn->prepare("UPDATE users SET password = :password WHERE id = :id");
-                        $update->execute([':password' => $hashed, ':id' => $user['id']]);
-                        // Update user array to reflect new hash
-                        $user['password'] = $hashed;
-                        return $user;
+            if ($user) {
+                if ($user['role'] === "admin") {
+                    // Return a specific error for admin login attempts
+                    return ['error' => 'Admin login is not allowed.'];
+                }
+                if ($user['role'] === "buyer") {
+                    $storedPassword = $user['password'];
+                    if (strpos($storedPassword, '$2y$') === 0) {
+                        if (password_verify($password, $storedPassword)) {
+                            return $user;
+                        }
+                    } else {
+                        if ($storedPassword === $password) {
+                            $hashed = password_hash($password, PASSWORD_BCRYPT);
+                            $update = $this->conn->prepare("UPDATE users SET password = :password WHERE id = :id");
+                            $update->execute([':password' => $hashed, ':id' => $user['id']]);
+                            $user['password'] = $hashed;
+                            return $user;
+                        }
                     }
                 }
             }
