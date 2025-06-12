@@ -12,8 +12,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    scrollRestoration: false,
-    serverComponentsExternalPackages: ["axios"], // Ensure this is false to reset scroll position
+    scrollRestoration: false, // Ensure this is false to reset scroll position
   },
 };
 
