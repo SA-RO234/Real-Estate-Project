@@ -32,7 +32,7 @@ class User
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     // Register  user model
-    public function register($name, $email, $phone, $role, $password,$avatar)
+    public function register($name, $email, $phone, $role, $password, $avatar)
     {
         try {
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
@@ -61,7 +61,7 @@ class User
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($user) {
+            if ($user && $user['role'] === "buyer") {
                 $storedPassword = $user['password'];
                 // If already hashed, use password_verify
                 if (strpos($storedPassword, '$2y$') === 0) {
@@ -121,7 +121,7 @@ class User
                 $fields[] = "password = :password";
                 $params[':password'] = password_hash($data['password'], PASSWORD_BCRYPT);
             }
-            if(isset($data['avatar'])){
+            if (isset($data['avatar'])) {
                 $fields[] = "avatar = :avatar";
                 $params[':avatar'] = $data['avatar'];
             }
@@ -252,5 +252,4 @@ class User
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':token' => $token, ':email' => $email]);
     }
-
 }

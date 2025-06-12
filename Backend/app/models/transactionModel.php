@@ -57,8 +57,7 @@ class TransactionModel
     }
 
     // Delete a transaction
-    public function delete($id)
-    {
+    public function delete($id){
         $stmt = $this->db->prepare("DELETE FROM transactions WHERE id = ?");
         return $stmt->execute([$id]);
     }
