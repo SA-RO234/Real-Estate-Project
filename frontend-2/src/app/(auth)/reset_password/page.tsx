@@ -1,18 +1,17 @@
-"use client";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { redirect } from "next/navigation";
-import axios from "axios";
 import ResetPasswordForm from "@/components/common/home/users/resetPasswordform";
-async function ResetPasswordPage({
+
+export default function ResetPasswordPage({
   searchParams,
 }: {
   searchParams: { token?: string };
 }) {
   const token = searchParams.token;
-  const [newPassword, setNewPassword] = useState(""); // This won't work directly in Server Components
+
+  // Redirect if token is missing (optional, based on your logic)
+  if (!token) {
+    redirect("/auth/login"); // Adjust the redirect path as needed
+  }
 
   return (
     <section className="h-screen w-full flex items-center justify-center">
