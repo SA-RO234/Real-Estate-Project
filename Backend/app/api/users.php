@@ -14,9 +14,11 @@ $dotenv->safeLoad();
 
 require "../controllers/UserController.php";
 require_once "../core/Session.php";
+require_once "../../config/database.php";
+require "../controllers/ForgotPasswordController.php";
 
 $usersController = new UserController();
-
+$resetController = new ForgotPasswordController();
 $method = $_SERVER['REQUEST_METHOD'];
 $url = $_SERVER['REQUEST_URI'];
 
@@ -41,8 +43,7 @@ $routes = [
             if ($user && isset($user['error'])) {
                 // Send specific error message (e.g., admin login not allowed)
                 echo json_encode(['message' => $user['error']]);
-
-            }elseif($user){
+            } elseif ($user) {
                 Session::set('user_id', $user['id']);
                 Session::set('email', $user['email']);
                 //  Send session to fron-end 
@@ -81,6 +82,7 @@ $routes = [
             $usersController->resetPassword($input);
         } elseif (isset($input['send_verification']) && isset($input['email'])) {
             $usersController->sendVerificationEmail($input);
+        } elseif (isset($input['action']) === 'forgot') {
         } else {
             echo json_encode(["message" => "Invalid request: Missing required fields."]);
         }
@@ -94,10 +96,9 @@ $routes = [
         $id = $_GET['id'];
         $usersController->updateUser($id, $input);
     },
-    
+
 
 ];
 if (array_key_exists($method, $routes)) {
     $routes[$method]();
 }
-

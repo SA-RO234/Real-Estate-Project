@@ -254,4 +254,12 @@ class User
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':token' => $token, ':email' => $email]);
     }
+
+    //  Update password by ID
+    public function updatePasswordById($id, $newPassword)
+    {
+        $query = "UPDATE users SET password = :password WHERE id = :id";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([':password' => $newPassword, ':id' => $id]);
+    }
 }
