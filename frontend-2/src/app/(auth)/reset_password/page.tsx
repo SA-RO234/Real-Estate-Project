@@ -1,22 +1,21 @@
 import { redirect } from "next/navigation";
 import ResetPasswordForm from "@/components/common/home/users/resetPasswordform";
 
-// Define the searchParams type
-interface SearchParams {
-  token?: string;
-}
-
 export default function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  // Access token from searchParams
-  const token = searchParams.token;
+  // Safely extract token as string
+  const token =
+    typeof searchParams.token === "string"
+      ? searchParams.token
+      : Array.isArray(searchParams.token)
+      ? searchParams.token[0]
+      : undefined;
 
-  // Redirect if token is missing (optional, based on your logic)
   if (!token) {
-    redirect("/auth/login"); // Adjust the redirect path as needed
+    redirect("/auth/login");
   }
 
   return (
