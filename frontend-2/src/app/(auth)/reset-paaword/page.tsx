@@ -23,7 +23,7 @@ const ResetPasswordPage = () => {
     }
     try {
       const response = await axios.post(
-        "http://localhost:3000/app/api/users.php",
+        "https://real-estate-clientside2.onrender.com/users",
         {
           reset_password: true,
           token,
