@@ -1,16 +1,12 @@
 import { redirect } from "next/navigation";
 import ResetPasswordForm from "@/components/common/home/users/resetPasswordform";
 
-export default function ResetPasswordPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default function ResetPasswordPage({ searchParams }: any) {
   // Safely extract token as string
   const token =
-    typeof searchParams.token === "string"
+    typeof searchParams?.token === "string"
       ? searchParams.token
-      : Array.isArray(searchParams.token)
+      : Array.isArray(searchParams?.token)
       ? searchParams.token[0]
       : undefined;
 
