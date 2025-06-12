@@ -1,12 +1,16 @@
 import { redirect } from "next/navigation";
 import ResetPasswordForm from "@/components/common/home/users/resetPasswordform";
 
+// Use the correct type for searchParams
+import type { ReadonlyURLSearchParams } from "next/navigation";
+
 export default function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: { token?: string };
+  searchParams: ReadonlyURLSearchParams;
 }) {
-  const token = searchParams.token;
+  // Access token using the get method, which returns string | null
+  const token = searchParams.get("token");
 
   // Redirect if token is missing (optional, based on your logic)
   if (!token) {
