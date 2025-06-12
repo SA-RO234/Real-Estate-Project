@@ -19,7 +19,7 @@ const ForgotPasswordPage = () => {
     try {
       // Replace with your backend endpoint
       const response = await axios.post(
-        "http://localhost:3000/app/api/users.php",
+        "https://real-estate-clientside2.onrender.com/users",
         { send_verification: true, email }
       );
       if (response.data.success) {

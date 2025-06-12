@@ -39,11 +39,13 @@ export default function MessagesClient({
     const fetchMessages = async () => {
       try {
         const res = await axios.get(
-          `http://localhost/Real-Estate-Management/Backend/app/api/messages.php?action=get-messages&sender_id=${sender_id}&receiver_id=${receiver_id}`
+          `https://real-estate-clientside2.onrender.com/messages?action=get-messages&sender_id=${sender_id}&receiver_id=${receiver_id}`
         );
-        setMessage(res.data);
+        // Ensure the response is an array
+        setMessage(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
+        setMessage([]); // fallback to empty array on error
       }
     };
     fetchMessages();
@@ -63,6 +65,7 @@ export default function MessagesClient({
     };
   }, [sender_id, receiver_id]);
 
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
@@ -74,7 +77,7 @@ export default function MessagesClient({
       };
 
       await axios.post(
-        "http://localhost/Real-Estate-Management/Backend/app/api/messages.php?action=send-message",
+        "https://real-estate-clientside2.onrender.com/messages?action=send-message",
         newMessage,
         {
           headers: {
@@ -88,16 +91,9 @@ export default function MessagesClient({
       console.error("Failed to send message:", error);
     }
   };
-
-  // const handleKeyDown = (e: React.KeyboardEvent) => {
-  //   if (e.key === "Enter" && !e.shiftKey) {
-  //     e.preventDefault();
-  //     handleSendMessage(e);
-  //   }
-  // };
   return (
     <Card
-      className={`w-full bg-gray-300 duration-[0.10s] fixed bottom-[-50px] right-[10px] z-[1000] max-w-md h-[96vh] flex flex-col rounded-[20px] overflow-hidden transition-transform ${
+      className={`w-full bg-gray-200 duration-[0.10s] fixed bottom-[-50px] right-[10px] z-[1000] max-w-md h-[96vh] flex flex-col rounded-[20px] overflow-hidden transition-transform ${
         isAnimating ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
       }`}
     >
