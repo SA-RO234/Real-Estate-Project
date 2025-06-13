@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 const LoginPage = () => {
   const heading = "Login";
   const subheading = "Welcome back";
@@ -120,6 +121,13 @@ const LoginPage = () => {
                       <FcGoogle className="mr-2 size-5" />
                       {googleText}
                     </Button>
+                    {/* Add shadcn alert for feedback */}
+                    {error && (
+                      <Alert variant="destructive" className="mt-4">
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                      </Alert>
+                    )}
                   </div>
                 </form>
                 <div className="mx-auto mt-8 flex justify-center gap-1 text-sm text-muted-foreground">
