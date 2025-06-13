@@ -20,7 +20,7 @@ const ForgotPasswordPage = () => {
       // Replace with your backend endpoint
       const response = await axios.post(
         "https://real-estate-clientside2.onrender.com/users",
-        { send_verification: true, email }
+        { forgot_password: true, email }
       );
       if (response.data.success) {
         setMessage("A verification link has been sent to your email.");
