@@ -24,7 +24,7 @@ const ResetPasswordForm = ({ token }: { token?: string }) => {
         {
           reset_password: true,
           token,
-          new_password: newPassword,
+          password: newPassword,
         }
       );
       if (response.data.message?.toLowerCase().includes("success")) {
