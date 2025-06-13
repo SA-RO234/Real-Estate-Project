@@ -48,8 +48,24 @@ class ForgotPasswordController
         // Send email
         $this->mail->addAddress($email, $user['name'] ?? '');
         $this->mail->Subject = 'Password Reset Request';
-        $this->mail->Body = "Click the following link to reset your password: $resetLink";
+        // Enable HTML email
+        $this->mail->isHTML(true);
+        $htmlContent = "
+           <html>
+           <body>
+               <h2>Password Reset Request</h2>
+               <p>Click the following link to reset your password:</p>
+               <a href='{$resetLink}'>Reset Password</a>
+               <p>If you did not request this, please ignore this email.</p>
+           </body>
+           </html>
+       ";
 
+        // Plain text fallback
+        $textContent = "Click the following link to reset your password: {$resetLink}\nIf you did not request this, please ignore this email.";
+
+        $this->mail->Body = $htmlContent;
+        $this->mail->AltBody = $textContent; // Plain text version as fallback
         if (!$this->mail->send()) {
             return [
                 'message' => 'Failed to send reset email.',
