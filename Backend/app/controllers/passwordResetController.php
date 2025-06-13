@@ -10,6 +10,10 @@ require_once "../../vendor/phpmailer/phpmailer/src/PHPMailer.php";
 require_once "../../vendor/phpmailer/phpmailer/src/SMTP.php";
 require_once "../../vendor/phpmailer/phpmailer/src/Exception.php";
 
+// Load environment variables
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
+
 class ForgotPasswordController
 {
     private $userModel;
