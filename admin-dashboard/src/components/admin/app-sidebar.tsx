@@ -2,22 +2,8 @@
 
 import * as React from "react";
 import {
-  ArrowUpCircleIcon,
-  BarChartIcon,
-  CameraIcon,
-  ClipboardListIcon,
-  DatabaseIcon,
-  FileCodeIcon,
-  FileIcon,
-  FileTextIcon,
-  FolderIcon,
-  HandCoins,
-  HelpCircleIcon,
-  House,
+
   LayoutDashboardIcon,
-  ListIcon,
-  SearchIcon,
-  SettingsIcon,
   HousePlus,
   UsersIcon,
   List,
@@ -33,10 +19,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 

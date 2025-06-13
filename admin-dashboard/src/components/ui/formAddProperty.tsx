@@ -5,9 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,7 +19,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Home, MapPin, FileText, Star, Camera, DollarSign } from "lucide-react";
+import { Home, MapPin, Star, Camera, DollarSign } from "lucide-react";
 import PropertyImageUpload from "@/components/ui/property-image-upload";
 import PropertyFeatures from "@/components/ui/property-fetures";
 
