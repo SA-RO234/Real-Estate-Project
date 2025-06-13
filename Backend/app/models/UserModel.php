@@ -193,68 +193,6 @@ class User
 
 
 
-    // Generate a password reset token
-    public function generateResetToken($email)
-    {
-        $token = bin2hex(random_bytes(50)); // Generate a random token
-        $sql = "UPDATE users SET reset_token = :token, token_expiry = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = :email";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':token' => $token, ':email' => $email]);
-        return $token;
-    }
-
-    // Send password reset email
-    public function sendResetEmail($email, $token)
-    {
-        $resetLink = "http://localhost:3000/?token=$token"; // Update with your domain
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = $_ENV['GMAIL_USER'];
-            $mail->Password   = $_ENV['GMAIL_APP_PASSWORD'];
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
-
-            $mail->setFrom($_ENV['GMAIL_USER'], 'Your App Name');
-            $mail->addAddress($email);
-            $mail->Subject = 'Password Reset Request';
-            $mail->Body    = "To reset your password, please click the following link: $resetLink";
-            $mail->isHTML(false);
-
-            $mail->send();
-            return true;
-        } catch (Exception $e) {
-            return $mail->ErrorInfo;
-        }
-    }
-
-    // Verify the reset token
-    public function verifyResetToken($token)
-    {
-        $sql = "SELECT * FROM users WHERE reset_token = :token AND token_expiry > NOW()";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':token' => $token]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
-    // Reset the password
-    public function resetPassword($email, $newPassword)
-    {
-        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-        $sql = "UPDATE users SET password = :password, reset_token = NULL, token_expiry = NULL WHERE email = :email";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([':password' => $hashedPassword, ':email' => $email]);
-    }
-
-    public function setVerifyToken($email, $token)
-    {
-        $sql = "UPDATE users SET verify_token = :token WHERE email = :email";
-        $stmt = $this->conn->prepare($sql);
-        return $stmt->execute([':token' => $token, ':email' => $email]);
-    }
-
     //  Update password by ID
     public function updatePasswordById($id, $newPassword)
     {
@@ -262,4 +200,23 @@ class User
         $stmt = $this->conn->prepare($query);
         return $stmt->execute([':password' => $newPassword, ':id' => $id]);
     }
+
+    public function getUserIdByEmail($email)
+    {
+        $sql = "SELECT id FROM users WHERE email = :email";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':email' => $email]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['id'] : null;
+    }
+
+
+//  Reset password by email
+    public function resetPasswordByEmail($email, $newPassword)
+    {
+        $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+        $query = "UPDATE users SET password = :password WHERE email = :email";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([':password' => $hashedPassword, ':email' => $email]);
+    }	
 }

@@ -1,11 +1,13 @@
 <?php
+require_once "../../config/database.php";
 class PasswordResetModel
 {
     private $conn;
 
-    public function __construct($db)
+    public function __construct()
     {
-        $this->conn = $db;
+        $db =  new Database();;
+        $this->conn = $db->getConnection();
     }
 
     public function createResetToken($userId, $token, $expires)
