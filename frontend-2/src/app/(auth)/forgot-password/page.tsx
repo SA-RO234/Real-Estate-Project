@@ -5,19 +5,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const ForgotPasswordPage = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setMessage("");
+    setLoading(true); // Start loading
     try {
-      // Replace with your backend endpoint
       const response = await axios.post(
         "https://real-estate-clientside2.onrender.com/users",
         { forgot_password: true, email }
@@ -25,13 +27,15 @@ const ForgotPasswordPage = () => {
       if (response.data.success) {
         setMessage("A verification link has been sent to your email.");
         setTimeout(() => {
-          router.push("/login"); // Redirect to login page after 2 seconds
+          router.push("/login");
         }, 2000);
       } else {
         setError(response.data.message || "Failed to send verification email.");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -48,14 +52,26 @@ const ForgotPasswordPage = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               required
+              disabled={loading} // Disable input while loading
             />
           </div>
-          <Button type="submit" className="w-full cursor-pointer">
-            Send Verification Link
+          <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+            {loading ? "Sending..." : "Send Verification Link"}
           </Button>
         </form>
-        {message && <p className="mt-4 text-green-600">{message}</p>}
-        {error && <p className="mt-4 text-red-600">{error}</p>}
+        {/* Use shadcn alert for feedback */}
+        {message && (
+          <Alert variant="default" className="mt-4">
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>{message}</AlertDescription>
+          </Alert>
+        )}
+        {error && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </div>
     </section>
   );
