@@ -1,4 +1,6 @@
 <?php
+require_once "../../config/database.php";
+
 class PropertyModel
 {
     private $conn;
@@ -21,9 +23,10 @@ class PropertyModel
     public $country;      // varchar(100), nullable (renamed from $location)
     public $imageForAd;
 
-    public function __construct($database)
+    public function __construct()
     {
-        $this->conn = $database;
+        $db = new Database();
+        $this->conn = $db->getConnection();
     }
 
     //   Retrieve all property from database 
@@ -42,7 +45,8 @@ class PropertyModel
         }
     }
 
-    public function getPropertyforAd(){
+    public function getPropertyforAd()
+    {
         try {
             $query = "SELECT p.id, p.title , p.description ,images.image_url AS ad_image_url 
                     FROM properties p 
@@ -90,10 +94,12 @@ class PropertyModel
         $features = []
     ) {
         try {
+            // Begin transaction
+            $this->conn->beginTransaction();
             $query = "INSERT INTO properties (
-            user_id, title, description, price, location_id, property_for, property_type_id,
-            bedrooms, bathrooms, square_feet, lot_size, year_built, status, listed_date, hoa_fees
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                user_id, title, description, price, location_id, property_for, property_type_id,
+                bedrooms, bathrooms, square_feet, lot_size, year_built, status, listed_date, hoa_fees
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
 
             $stmt->execute([
@@ -124,8 +130,12 @@ class PropertyModel
                 }
             }
 
-            return true;
+            // Commit transaction
+            $this->conn->commit();
+            // Return the new property ID
+            return $property_id;
         } catch (PDOException $e) {
+            $this->conn->rollBack();
             error_log("Error inserting property: " . $e->getMessage());
             return false;
         }

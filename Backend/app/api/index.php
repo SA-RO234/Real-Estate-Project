@@ -50,6 +50,7 @@ $routes = [
         }
     },
     'POST' => function () use ($properTyController, $request) {
+        echo "Hello from POST method!";
         // If the request contains filter keys, call the filter method
         if (
             isset($request['bedrooms']) ||
@@ -60,7 +61,25 @@ $routes = [
         ) {
             $properTyController->getPropertyByFilter($request);
         } else {
-            $properTyController->addProperty();
+            echo "Adding a new property!";
+            $properTyController->addProperty(
+                $request['title'] ?? null,
+                $request['description'] ?? null,
+                $request['price'] ?? null,
+                $request['location_id'] ?? null,
+                $request['property_for'] ?? null,
+                $request['property_type_id'] ?? null,
+                $request['user_id'] ?? null,
+                $request['bedrooms'] ?? null,
+                $request['bathrooms'] ?? null,
+                $request['square_feet'] ?? null,
+                $request['lot_size'] ?? null,
+                $request['year_built'] ?? null,
+                $request['status'] ?? null,
+                $request['listed_date'] ?? null,
+                $request['hoa_fees'] ?? null,
+                $request['features'] ?? []
+            );
         }
     },
     'PUT' => function () use ($properTyController) {

@@ -9,11 +9,8 @@ class PropertyController
     private $property;
     public function __construct()
     {
-        $database = new Database();
-        $db = $database->getConnection();
-        $this->property = new PropertyModel($db);
+        $this->property = new PropertyModel();
     }
-
     // Controller Method to Handle GET Request for All Properties
     public function getProperties()
     {
@@ -121,6 +118,7 @@ class PropertyController
             );
 
             if ($success) {
+                echo "Success";
                 echo json_encode(["message" => "Property added successfully!"]);
             } else {
                 http_response_code(400);
