@@ -17,28 +17,7 @@ interface PropertyImage {
 }
 
 export default function PropertyImageUpload() {
-  const [images, setImages] = useState<PropertyImage[]>([
-    {
-      id: "1",
-      url: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: "2",
-      url: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: "3",
-      url: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: "4",
-      url: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: "5",
-      url: "/placeholder.svg?height=200&width=300",
-    },
-  ]);
+  const [images, setImages] = useState<PropertyImage[]>([]);
 
   const [dragOver, setDragOver] = useState(false);
   const [description, setDescription] = useState("");

@@ -30,7 +30,7 @@ class ForgotPasswordController
         $this->mail->Port = 2525;
         $this->mail->Username = '18f4ff3638633f';
         $this->mail->Password = '8ce4534182baf3';
-        $this->mail->setFrom('noreply@example.com', 'Real Estate App'); // Use any valid email
+        $this->mail->setFrom('narong@gmail.com', 'Real Estate App'); // Use any valid email
     }
     public function requestReset($email)
     {
@@ -42,7 +42,7 @@ class ForgotPasswordController
 
         $this->resetModel->createResetToken($user['id'], $token, $expires);
 
-        $resetLink = getenv('FRONTEND_URL') . "/forgot-password?token=$token";
+        $resetLink = getenv('FRONTEND_URL') . "/reset-password?token=$token";
 
         // Send email
         $this->mail->addAddress($email, $user['name'] ?? '');
