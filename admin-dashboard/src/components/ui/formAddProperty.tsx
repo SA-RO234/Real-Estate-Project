@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -45,13 +42,15 @@ export default function PropertyRegistrationForm() {
       description,
       // Add other fields as needed
     };
-
     try {
-      const response = await fetch("/api/properties", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(propertyData),
-      });
+      const response = await fetch(
+        "https://real-estate-clientside2.onrender.com",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(propertyData),
+        }
+      );
       if (response.ok) {
         // Success: handle UI feedback, reset form, etc.
         alert("Property created successfully!");

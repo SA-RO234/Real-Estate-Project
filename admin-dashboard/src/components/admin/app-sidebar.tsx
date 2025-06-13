@@ -2,13 +2,16 @@
 
 import * as React from "react";
 import {
-
+  BadgeDollarSign,
   LayoutDashboardIcon,
   HousePlus,
   UsersIcon,
   List,
   PlusCircle,
+  Bath,
   Mails,
+  MapPinHouse,
+  Building,
 } from "lucide-react";
 
 import { NavDocuments } from "@/components/admin/nav-documents";
@@ -41,6 +44,21 @@ const data = {
           url: "/property/add",
           icon: PlusCircle,
         },
+        {
+          title: "Property Type",
+          url: "/property/propetyType",
+          icon: Building,
+        },
+        {
+          title: "Property City",
+          url: "/property/propertyEachCity",
+          icon: MapPinHouse,
+        },
+        {
+          title: "Property Feature",
+          url: "/property/propertyEachCity",
+          icon: Bath,
+        },
       ],
     },
     {
@@ -51,6 +69,15 @@ const data = {
         { title: "All Users", url: "/users", icon: List },
         { title: "Add User", url: "/users/add", icon: PlusCircle },
       ],
+    },
+    {
+      title: "Transaction",
+      url: "/Transaction",
+      icon: BadgeDollarSign,
+      // children: [
+      //   { title: "All Users", url: "/users", icon: List },
+      //   { title: "Add User", url: "/users/add", icon: PlusCircle },
+      // ],
     },
     {
       title: "Messages",
