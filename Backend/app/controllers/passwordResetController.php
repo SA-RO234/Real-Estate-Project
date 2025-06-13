@@ -10,9 +10,6 @@ require_once "../../vendor/phpmailer/phpmailer/src/PHPMailer.php";
 require_once "../../vendor/phpmailer/phpmailer/src/SMTP.php";
 require_once "../../vendor/phpmailer/phpmailer/src/Exception.php";
 
-// Load environment variables
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-$dotenv->load();
 
 class ForgotPasswordController
 {
@@ -46,7 +43,7 @@ class ForgotPasswordController
 
         $this->resetModel->createResetToken($user['id'], $token, $expires);
 
-        $resetLink = getenv('FRONTEND_URL') . "/reset-password?token=$token";
+        $resetLink = "https://real-estate-clientside.onrender.com/reset-password?token=$token";
 
         // Send email
         $this->mail->addAddress($email, $user['name'] ?? '');

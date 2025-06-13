@@ -8,9 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 error_log("REQUEST_METHOD: " . $_SERVER['REQUEST_METHOD']);
-require_once __DIR__ . '/../../vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
-$dotenv->safeLoad();
 
 require "../controllers/UserController.php";
 require_once "../core/Session.php";
@@ -99,3 +96,5 @@ $routes = [
 if (array_key_exists($method, $routes)) {
     $routes[$method]();
 }
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
