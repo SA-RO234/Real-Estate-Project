@@ -36,7 +36,12 @@ class ForgotPasswordController
     public function requestReset($email)
     {
         $user = $this->userModel->getUserByEmail($email);
-        if (!$user) return ['message' => 'Email not found'];
+        if (!$user) {
+            return [
+                'success' => false,
+                'message' => 'Email not found'
+            ];
+        }
 
         $token = bin2hex(random_bytes(32));
         $expires = date("Y-m-d H:i:s", time() + 3600);
@@ -48,7 +53,6 @@ class ForgotPasswordController
         // Send email
         $this->mail->addAddress($email, $user['name'] ?? '');
         $this->mail->Subject = 'Password Reset Request';
-        // Enable HTML email
         $this->mail->isHTML(true);
         $htmlContent = "
            <html>
@@ -61,19 +65,23 @@ class ForgotPasswordController
            </html>
        ";
 
-        // Plain text fallback
         $textContent = "Click the following link to reset your password: {$resetLink}\nIf you did not request this, please ignore this email.";
 
         $this->mail->Body = $htmlContent;
-        $this->mail->AltBody = $textContent; // Plain text version as fallback
+        $this->mail->AltBody = $textContent;
+
         if (!$this->mail->send()) {
             return [
+                'success' => false,
                 'message' => 'Failed to send reset email.',
                 'error' => $this->mail->ErrorInfo
             ];
         }
 
-        return ['message' => 'Reset email sent'];
+        return [
+            'success' => true,
+            'message' => 'A verification link has been sent to your email.'
+        ];
     }
 
 
