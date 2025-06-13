@@ -28,7 +28,7 @@ const ForgotPasswordPage = () => {
       if (response.data.success) {
         setMessage("A verification link has been sent to your email.");
         setError("");
-        setTimeout(() c=> {
+        setTimeout(()=> {
           router.push("/login");
         }, 2000);
       } else {
