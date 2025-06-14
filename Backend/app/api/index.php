@@ -50,7 +50,6 @@ $routes = [
         }
     },
     'POST' => function () use ($properTyController, $request) {
-        echo "Hello from POST method!";
         // If the request contains filter keys, call the filter method
         if (
             isset($request['bedrooms']) ||
@@ -61,7 +60,6 @@ $routes = [
         ) {
             $properTyController->getPropertyByFilter($request);
         } else {
-            echo "Adding a new property!";
             $properTyController->addProperty(
                 $request['title'] ?? null,
                 $request['description'] ?? null,

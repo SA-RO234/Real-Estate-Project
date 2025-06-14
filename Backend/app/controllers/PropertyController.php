@@ -78,7 +78,6 @@ class PropertyController
                     throw new Exception("Missing required field: " . $field);
                 }
             }
-
             // Extract data with defaults for optional fields
             $title = $data['title'];
             $description = $data['description'];
@@ -98,7 +97,7 @@ class PropertyController
             $features = $data['features'] ?? [];
 
             // Call the model to add the property
-            $success = $this->property->addProperty(
+            $result = $this->property->addProperty(
                 $title,
                 $description,
                 $price,
@@ -117,9 +116,12 @@ class PropertyController
                 $features
             );
 
-            if ($success) {
-                echo "Success";
-                echo json_encode(["message" => "Property added successfully!"]);
+            if ($result) {
+                echo json_encode([
+                    "success" => true,
+                    "message" => "Property added successfully.",
+                    "property_id" => $result
+                ]);
             } else {
                 http_response_code(400);
                 echo json_encode([
@@ -234,10 +236,10 @@ class PropertyController
 
 
     // get Property by type
-    public function getPropertyByType($type)
+    public function getPropertyByType()
     {
         try {
-            $stmt = $this->property->getPropertyByType($type);
+            $stmt = $this->property->getAllPropertyTypes();
             if ($stmt === false) {
                 echo json_encode(['error' => 'Database query failed.']);
                 return;

@@ -209,28 +209,8 @@ class PropertyModel
         }
     }
 
-    //     get property by type
-    public function getPropertyByType($type)
-    {
-        try {
-            $stmt = $this->conn->prepare(
-                "SELECT p.*, pt.name 
-                 FROM properties p
-                 INNER JOIN property_types pt ON p.property_type_id = pt.id
-                 WHERE pt.name = ?"
-            );
-            $stmt->execute([$type]);
-            return $stmt;
-        } catch (PDOException $e) {
-            error_log("Error retrieving properties by type: " . $e->getMessage());
-            return false;
-        }
-    }
-
-
     // get all property types
-    public function getAllPropertyTypes()
-    {
+    public function getAllPropertyTypes(){
         try {
             $stmt = $this->conn->prepare("SELECT * FROM property_types");
             $stmt->execute();
