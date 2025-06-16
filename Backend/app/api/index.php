@@ -42,43 +42,15 @@ $routes = [
         } elseif (isset($_GET['byCity'])) {
             $properTyController->getPropertyOfEachCity();
         } elseif (isset($_GET['propertyType'])) {
-            $properTyController->getPropertyByType($_GET['propertyType']);
+            $properTyController->getAllPropertyTypes();
         } else if (isset($_GET["allpropertiestype"])) {
             $properTyController->getAllPropertyTypes();
         } else {
             $properTyController->getProperties();
         }
     },
-    'POST' => function () use ($properTyController, $request) {
-        // If the request contains filter keys, call the filter method
-        if (
-            isset($request['bedrooms']) ||
-            isset($request['location']) ||
-            isset($request['minPrice']) ||
-            isset($request['maxPrice']) ||
-            isset($request['propertyType'])
-        ) {
-            $properTyController->getPropertyByFilter($request);
-        } else {
-            $properTyController->addProperty(
-                $request['title'] ?? null,
-                $request['description'] ?? null,
-                $request['price'] ?? null,
-                $request['location_id'] ?? null,
-                $request['property_for'] ?? null,
-                $request['property_type_id'] ?? null,
-                $request['user_id'] ?? null,
-                $request['bedrooms'] ?? null,
-                $request['bathrooms'] ?? null,
-                $request['square_feet'] ?? null,
-                $request['lot_size'] ?? null,
-                $request['year_built'] ?? null,
-                $request['status'] ?? null,
-                $request['listed_date'] ?? null,
-                $request['hoa_fees'] ?? null,
-                $request['features'] ?? []
-            );
-        }
+    'POST' => function () use ($properTyController) {
+        $properTyController->addProperty();
     },
     'PUT' => function () use ($properTyController) {
         $properTyController->updateProperty();

@@ -33,7 +33,7 @@ class PropertyController
                         "square_feet" => $square_feet,
                         "lot_size" => $lot_size,
                         "year_built" => $year_built,
-                        "propertyfor" => $propertyfor,
+                        "property_for" => $property_for,
                         "listed_date" => $listed_date,
                         "hoa_fees" => $hoa_fees,
                         "location_id" => $location_id,
@@ -68,32 +68,48 @@ class PropertyController
     public function addProperty()
     {
         try {
-            // Get data from request body
             $data = json_decode(file_get_contents("php://input"), true);
 
-            // Check if required fields are present
-            $requiredFields = ['title', 'description', 'price', 'location_id', 'user_id', 'status'];
+            // List required fields
+            $requiredFields = [
+                'title',
+                'description',
+                'price',
+                'location_id',
+                'property_for',
+                'property_type_id',
+                'user_id',
+                'status'
+            ];
+
+            // Check for missing fields
             foreach ($requiredFields as $field) {
-                if (!isset($data[$field])) {
-                    throw new Exception("Missing required field: " . $field);
+                if (empty($data[$field])) {
+                    http_response_code(400);
+                    echo json_encode([
+                        "status" => "error",
+                        "message" => "Missing required field: $field"
+                    ]);
+                    return;
                 }
             }
+
             // Extract data with defaults for optional fields
             $title = $data['title'];
             $description = $data['description'];
             $price = $data['price'];
             $location_id = $data['location_id'];
             $user_id = $data['user_id'];
-            $property_for = $data['property_for'] ?? 'Both';
-            $property_type_id = $data['property_type_id'] ?? null;
-            $bedrooms = $data['bedrooms'] ?? 0;
-            $bathrooms = $data['bathrooms'] ?? 0;
-            $square_feet = $data['square_feet'] ?? 0;
-            $lot_size = $data['lot_size'] ?? 0;
-            $year_built = $data['year_built'] ?? date('Y');
+            $property_for = $data['property_for'];
+            $property_type_id = $data['property_type_id'];
+            $bedrooms = $data['bedrooms'] ?? null;
+            $bathrooms = $data['bathrooms'] ?? null;
+            $square_feet = $data['square_feet'] ?? null;
+            $lot_size = $data['lot_size'] ?? null;
+            $year_built = $data['year_built'] ?? null;
             $status = $data['status'];
-            $listed_date = $data['listed_date'] ?? date('Y-m-d H:i:s');
-            $hoa_fees = $data['hoa_fees'] ?? 0;
+            $listed_date = $data['listed_date'] ?? date('Y-m-d');
+            $hoa_fees = $data['hoa_fees'] ?? null;
             $features = $data['features'] ?? [];
 
             // Call the model to add the property
@@ -130,7 +146,7 @@ class PropertyController
                 ]);
             }
         } catch (Exception $e) {
-            http_response_code(400); // Bad request
+            http_response_code(400);
             echo json_encode(["error" => $e->getMessage()]);
         }
     }
@@ -224,7 +240,6 @@ class PropertyController
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $result[] = [
                     'City' => $row['city'],
-                    'Count' => $row['property_count'],
                     'City_image' => $row['city_image']
                 ];
             }
@@ -235,24 +250,6 @@ class PropertyController
     }
 
 
-    // get Property by type
-    public function getPropertyByType()
-    {
-        try {
-            $stmt = $this->property->getAllPropertyTypes();
-            if ($stmt === false) {
-                echo json_encode(['error' => 'Database query failed.']);
-                return;
-            }
-            $result = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result[] = $row;
-            }
-            echo json_encode($result, JSON_PRETTY_PRINT);
-        } catch (Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
-        }
-    }
 
     //  get all property types
     public function getAllPropertyTypes()

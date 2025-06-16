@@ -33,10 +33,13 @@ class PropertyModel
     public function getAllproperties()
     {
         try {
-            $query = "SELECT p.*, locations.*,
-                     (SELECT image_url FROM images WHERE property_id = p.id LIMIT 1) AS image_url
-                     FROM {$this->table_name} p
-                    INNER JOIN locations ON p.location_id = locations.id";
+            $query = "SELECT 
+                    p.*, 
+                    locations.*,
+                    COALESCE(p.property_for, 'unknown') AS property_for,
+                    (SELECT image_url FROM images WHERE property_id = p.id LIMIT 1) AS image_url
+                  FROM {$this->table_name} p
+                  INNER JOIN locations ON p.location_id = locations.id";
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
             return $stmt;
@@ -94,7 +97,7 @@ class PropertyModel
         $features = []
     ) {
         try {
-            // Begin transaction
+            // Start transaction
             $this->conn->beginTransaction();
             $query = "INSERT INTO properties (
                 user_id, title, description, price, location_id, property_for, property_type_id,
@@ -135,8 +138,8 @@ class PropertyModel
             // Return the new property ID
             return $property_id;
         } catch (PDOException $e) {
-            $this->conn->rollBack();
             error_log("Error inserting property: " . $e->getMessage());
+            $this->conn->rollBack();
             return false;
         }
     }
@@ -192,15 +195,7 @@ class PropertyModel
     function getPropertyofEachCity()
     {
         try {
-            $stmt = $this->conn->prepare(
-                "SELECT 
-                l.city,
-                l.City_image AS city_image,
-                COUNT(p.id) AS property_count
-             FROM properties p
-             INNER JOIN locations l ON p.location_id = l.id
-             GROUP BY l.city, l.City_image"
-            );
+            $stmt = $this->conn->prepare("SELECT  * FROM locations");
             $stmt->execute();
             return $stmt;
         } catch (PDOException $e) {
@@ -210,7 +205,8 @@ class PropertyModel
     }
 
     // get all property types
-    public function getAllPropertyTypes(){
+    public function getAllPropertyTypes()
+    {
         try {
             $stmt = $this->conn->prepare("SELECT * FROM property_types");
             $stmt->execute();
