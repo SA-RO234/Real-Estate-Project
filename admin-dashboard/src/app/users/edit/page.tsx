@@ -31,31 +31,20 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-import type {
-  User as UserType,
-  UserPreferences,
-} from "@/app/lib/types/usersType";
+import type { UserPreferences } from "@/app/lib/types/usersType";
 
-interface UserProfileFormProps {
-  user?: UserType;
-  onSave?: (userData: Partial<UserType>) => void;
-  onPasswordChange?: (oldPassword: string, newPassword: string) => void;
-  onPreferencesChange?: (preferences: UserPreferences) => void;
-}
+// Remove all references to onSave, onPasswordChange, onPreferencesChange
+// and provide default initial values for formData to avoid undefined errors.
 
-export default function Page({
-  user,
-  onSave,
-  onPasswordChange,
-  onPreferencesChange,
-}: UserProfileFormProps) {
+export default function Page() {
+  // Provide default values for formData to avoid undefined errors
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    role: user?.role || "user",
-    avatar: user?.avatar || "",
-    status: user?.status || 1,
+    name: "",
+    email: "",
+    phone: "",
+    role: "user",
+    status: 1,
+    avatar: "",
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -93,10 +82,12 @@ export default function Page({
     setPreferences((prev) => ({ ...prev, [field]: value }));
   };
 
+  // Dummy save handlers (replace with real API calls as needed)
   const handleSaveProfile = async () => {
     setLoading(true);
     try {
-      await onSave?.(formData);
+      // TODO: Add API call to save profile
+      alert("Profile saved (dummy handler)");
     } finally {
       setLoading(false);
     }
@@ -107,13 +98,10 @@ export default function Page({
       alert("New passwords don't match!");
       return;
     }
-
     setLoading(true);
     try {
-      await onPasswordChange?.(
-        passwordData.oldPassword,
-        passwordData.newPassword
-      );
+      // TODO: Add API call to change password
+      alert("Password updated (dummy handler)");
       setPasswordData({
         oldPassword: "",
         newPassword: "",
@@ -127,13 +115,14 @@ export default function Page({
   const handleSavePreferences = async () => {
     setLoading(true);
     try {
-      await onPreferencesChange?.(preferences);
+      // TODO: Add API call to save preferences
+      alert("Preferences saved (dummy handler)");
     } finally {
       setLoading(false);
     }
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name: string = "") => {
     return name
       .split(" ")
       .map((n) => n[0])
@@ -141,7 +130,7 @@ export default function Page({
       .toUpperCase();
   };
 
-  const getRoleColor = (role: string) => {
+  const getRoleColor = (role: string = "") => {
     switch (role.toLowerCase()) {
       case "admin":
         return "bg-red-100 text-red-800";
@@ -205,7 +194,7 @@ export default function Page({
             <div className="flex items-center gap-2">
               <Badge className={getRoleColor(formData.role)}>
                 <Shield className="h-3 w-3 mr-1" />
-                {formData.role.toUpperCase()}
+                {formData.role?.toUpperCase()}
               </Badge>
               <Badge variant={formData.status === 1 ? "default" : "secondary"}>
                 {formData.status === 1 ? "Active" : "Inactive"}
