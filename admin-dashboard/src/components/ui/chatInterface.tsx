@@ -4,7 +4,7 @@ import { Search, Settings, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils/utils";
 import axios from "axios";
 const AdminID = 13;
 const ChatInterface = ({ ClientID }: { ClientID: number }) => {
@@ -16,7 +16,7 @@ const ChatInterface = ({ ClientID }: { ClientID: number }) => {
     const fetchConversations = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/app/api/messages.php?admin_id=${AdminID}&client_id=${ClientID}`
+          `https://real-estate-clientside2.onrender.com/messages?admin_id=${AdminID}&client_id=${ClientID}`
         );
         // console.log("API Response:", response.data);
 
@@ -65,11 +65,14 @@ const ChatInterface = ({ ClientID }: { ClientID: number }) => {
 
       setMessage("");
 
-      await axios.post("http://localhost:3000/app/api/sendMessage.php", {
-        admin_id: AdminID,
-        client_id: ClientID,
-        content: message,
-      });
+      await axios.post(
+        "https://real-estate-clientside2.onrender.com/sendMessage",
+        {
+          admin_id: AdminID,
+          client_id: ClientID,
+          content: message,
+        }
+      );
     } catch (error) {
       console.error("Error sending message:", error);
     }
