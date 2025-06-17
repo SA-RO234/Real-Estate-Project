@@ -16,10 +16,6 @@ import type { UserFormData } from "@/app/lib/types/usersType";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Input } from "@/components/ui/input";
-interface UserRegistrationFormProps {
-  onSubmit?: (userData: UserFormData) => void;
-  loading?: boolean;
-}
 
 export default function Page() {
   const [formData, setFormData] = useState<UserFormData>({
