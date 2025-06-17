@@ -31,7 +31,10 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-import type { User as UserType, UserPreferences } from "@/app/lib/types/usersType";
+import type {
+  User as UserType,
+  UserPreferences,
+} from "@/app/lib/types/usersType";
 
 interface UserProfileFormProps {
   user?: UserType;
@@ -40,7 +43,7 @@ interface UserProfileFormProps {
   onPreferencesChange?: (preferences: UserPreferences) => void;
 }
 
-export default function UserProfileForm({
+export default function Page({
   user,
   onSave,
   onPasswordChange,
@@ -154,8 +157,9 @@ export default function UserProfileForm({
   return (
     <div className="w-full mx-auto p-6 space-y-6">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-900">Update User Information</h1>
-      
+        <h1 className="text-3xl font-bold text-slate-900">
+          Update User Information
+        </h1>
       </div>
 
       {/* Personal Information */}
