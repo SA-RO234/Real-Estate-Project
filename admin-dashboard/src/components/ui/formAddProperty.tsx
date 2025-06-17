@@ -62,19 +62,22 @@ export default function PropertyRegistrationForm() {
       status: propertyStatus,
       listed_date: listedDate,
       hoa_fees: Number(hoaFees),
-      location_id: Number, // Default to 1 if not found
-      property_type_id: Number,
+      location_id: location ? Number(location) : 1, // or whatever default you want
+      property_type_id: propertyType ? Number(propertyType) : 1,
       property_for: propertyFor,
       user_id: userId,
       features,
     };
 
     try {
-      const response = await fetch("http://localhost:3000/app/api/index.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(propertyData),
-      });
+      const response = await fetch(
+        "https://real-estate-clientside2.onrender.com",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(propertyData),
+        }
+      );
       if (response.ok) {
         alert("Property created successfully!");
       } else {
@@ -89,7 +92,7 @@ export default function PropertyRegistrationForm() {
     const FetchPropertyType = async () => {
       try {
         const responce = await axios.get(
-          "http://localhost:3000/app/api/index.php?propertyType"
+          "https://real-estate-clientside2.onrender.com?propertyType"
         );
         setPropertyType(responce.data);
         console.log(responce.data);
