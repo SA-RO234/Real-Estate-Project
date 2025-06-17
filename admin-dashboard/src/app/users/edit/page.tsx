@@ -52,13 +52,6 @@ export default function Page() {
     newPassword: "",
     confirmPassword: "",
   });
-
-  const [preferences, setPreferences] = useState<UserPreferences>({
-    theme: "light",
-    language: "english",
-    timezone: "",
-  });
-
   const [showPasswords, setShowPasswords] = useState({
     old: false,
     new: false,
@@ -75,12 +68,7 @@ export default function Page() {
     setPasswordData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handlePreferenceChange = (
-    field: keyof UserPreferences,
-    value: string
-  ) => {
-    setPreferences((prev) => ({ ...prev, [field]: value }));
-  };
+
 
   // Dummy save handlers (replace with real API calls as needed)
   const handleSaveProfile = async () => {
@@ -399,67 +387,6 @@ export default function Page() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <Label htmlFor="theme">Theme</Label>
-              <Select
-                value={preferences.theme}
-                onValueChange={(value) =>
-                  handlePreferenceChange("theme", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select theme" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="light">Light Mode</SelectItem>
-                  <SelectItem value="dark">Dark Mode</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="language">Language</Label>
-              <Select
-                value={preferences.language}
-                onValueChange={(value) =>
-                  handlePreferenceChange("language", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="english">English</SelectItem>
-                  <SelectItem value="spanish">Spanish</SelectItem>
-                  <SelectItem value="french">French</SelectItem>
-                  <SelectItem value="german">German</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="timezone">Timezone</Label>
-              <Select
-                value={preferences.timezone}
-                onValueChange={(value) =>
-                  handlePreferenceChange("timezone", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select timezone" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="utc">UTC</SelectItem>
-                  <SelectItem value="est">Eastern Time</SelectItem>
-                  <SelectItem value="pst">Pacific Time</SelectItem>
-                  <SelectItem value="cet">Central European Time</SelectItem>
-                  <SelectItem value="ist">India Standard Time</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
           <div className="flex justify-end">
             <Button onClick={handleSavePreferences} disabled={loading}>

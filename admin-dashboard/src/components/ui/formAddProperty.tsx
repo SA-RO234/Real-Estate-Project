@@ -19,6 +19,7 @@ import { Home, MapPin, Star, Camera, DollarSign } from "lucide-react";
 import PropertyImageUpload from "@/components/ui/property-image-upload";
 import PropertyFeatures from "@/components/ui/property-fetures";
 import axios from "axios";
+import { parse } from "path";
 
 export default function PropertyRegistrationForm() {
   const [activeTab, setActiveTab] = useState("general");
@@ -26,7 +27,10 @@ export default function PropertyRegistrationForm() {
   // Add state for form fields
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
-  const [propertyType, setPropertyType] = useState("");
+  const [propertyType, setPropertyType] = useState<
+    { id: number; City: string }[]
+  >([]);
+  const [selectedPropertyType, setSelectedPropertyType] = useState<string>("");
   const [propertyStatus, setPropertyStatus] = useState("");
   const [description, setDescription] = useState("");
   const [propertyFor, setPropertyFor] = useState("");
@@ -41,8 +45,8 @@ export default function PropertyRegistrationForm() {
   const [features, setFeatures] = useState<number[]>([]); // Array of feature IDs
 
   // Example: user_id is hardcoded, replace with actual user logic if needed
+  // const userId = JSON.parse(localStorage.getItem("user"))
   const userId = 1;
-
   // Handle features selection from PropertyFeatures component
   const handleFeaturesChange = (selectedFeatures: number[]) => {
     setFeatures(selectedFeatures);
@@ -63,7 +67,7 @@ export default function PropertyRegistrationForm() {
       listed_date: listedDate,
       hoa_fees: Number(hoaFees),
       location_id: location ? Number(location) : 1, // or whatever default you want
-      property_type_id: propertyType ? Number(propertyType) : 1,
+      property_type_id: selectedPropertyType ? Number(selectedPropertyType) : 1,
       property_for: propertyFor,
       user_id: userId,
       features,
@@ -95,8 +99,6 @@ export default function PropertyRegistrationForm() {
           "https://real-estate-clientside2.onrender.com?propertyType"
         );
         setPropertyType(responce.data);
-        console.log(responce.data);
-        
       } catch (error) {
         console.error("Fail To fetch  property Type ! ", error);
       }
@@ -219,19 +221,18 @@ export default function PropertyRegistrationForm() {
                         Property Type *
                       </Label>
                       <Select
-                        value={propertyType}
-                        onValueChange={setPropertyType}
+                        value={selectedPropertyType}
+                        onValueChange={setSelectedPropertyType}
                       >
                         <SelectTrigger className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500">
                           <SelectValue placeholder="Select property type" />
                         </SelectTrigger>
                         <SelectContent className="bg-black text-white">
-                          <SelectItem value="apartment">Apartment</SelectItem>
-                          <SelectItem value="house">House</SelectItem>
-                          <SelectItem value="villa">Villa</SelectItem>
-                          <SelectItem value="condo">Condo</SelectItem>
-                          <SelectItem value="townhouse">Townhouse</SelectItem>
-                          <SelectItem value="commercial">Commercial</SelectItem>
+                          {propertyType.map((e) => (
+                            <SelectItem key={e.id} value={e.id.toString()}>
+                              {e.City}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
