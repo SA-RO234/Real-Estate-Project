@@ -1,6 +1,5 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,9 +18,9 @@ import { Badge } from "@/components/ui/badge";
 import { Home, MapPin, Star, Camera, DollarSign } from "lucide-react";
 import PropertyImageUpload from "@/components/ui/property-image-upload";
 import PropertyFeatures from "@/components/ui/property-fetures";
+import axios from "axios";
 
 export default function PropertyRegistrationForm() {
-  const [propertyFor, setPropertyFor] = useState("rent");
   const [activeTab, setActiveTab] = useState("general");
 
   // Add state for form fields
@@ -30,38 +29,77 @@ export default function PropertyRegistrationForm() {
   const [propertyType, setPropertyType] = useState("");
   const [propertyStatus, setPropertyStatus] = useState("");
   const [description, setDescription] = useState("");
+  const [propertyFor, setPropertyFor] = useState("");
+  const [bedrooms, setBedrooms] = useState("");
+  const [bathrooms, setBathrooms] = useState("");
+  const [squareFeet, setSquareFeet] = useState("");
+  const [lotSize, setLotSize] = useState("");
+  const [yearBuilt, setYearBuilt] = useState("");
+  const [hoaFees, setHoaFees] = useState("");
+  const [listedDate, setListedDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [features, setFeatures] = useState<number[]>([]); // Array of feature IDs
+
+  // Example: user_id is hardcoded, replace with actual user logic if needed
+  const userId = 1;
+
+  // Handle features selection from PropertyFeatures component
+  const handleFeaturesChange = (selectedFeatures: number[]) => {
+    setFeatures(selectedFeatures);
+  };
 
   // Handle form submission
   const handleCreateProperty = async () => {
     const propertyData = {
       title,
-      price,
-      propertyFor,
-      propertyType,
-      propertyStatus,
       description,
-      // Add other fields as needed
+      price: Number(price),
+      bedrooms: Number(bedrooms),
+      bathrooms: Number(bathrooms),
+      square_feet: Number(squareFeet),
+      lot_size: lotSize,
+      year_built: Number(yearBuilt),
+      status: propertyStatus,
+      listed_date: listedDate,
+      hoa_fees: Number(hoaFees),
+      location_id: Number, // Default to 1 if not found
+      property_type_id: Number,
+      property_for: propertyFor,
+      user_id: userId,
+      features,
     };
+
     try {
-      const response = await fetch(
-        "https://real-estate-clientside2.onrender.com",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(propertyData),
-        }
-      );
+      const response = await fetch("http://localhost:3000/app/api/index.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(propertyData),
+      });
       if (response.ok) {
-        // Success: handle UI feedback, reset form, etc.
         alert("Property created successfully!");
       } else {
-        // Error: handle error feedback
         alert("Failed to create property.");
       }
     } catch (error) {
       alert("Error: " + error);
     }
   };
+
+  useEffect(() => {
+    const FetchPropertyType = async () => {
+      try {
+        const responce = await axios.get(
+          "http://localhost:3000/app/api/index.php?propertyType"
+        );
+        setPropertyType(responce.data);
+        console.log(responce.data);
+        
+      } catch (error) {
+        console.error("Fail To fetch  property Type ! ", error);
+      }
+    };
+    FetchPropertyType();
+  }, []);
 
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 ">
@@ -184,7 +222,7 @@ export default function PropertyRegistrationForm() {
                         <SelectTrigger className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500">
                           <SelectValue placeholder="Select property type" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-black text-white">
                           <SelectItem value="apartment">Apartment</SelectItem>
                           <SelectItem value="house">House</SelectItem>
                           <SelectItem value="villa">Villa</SelectItem>
@@ -209,7 +247,7 @@ export default function PropertyRegistrationForm() {
                       <SelectTrigger className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500">
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-black text-white">
                         <SelectItem value="available">Available</SelectItem>
                         <SelectItem value="sold">Sold</SelectItem>
                         <SelectItem value="rented">Rented</SelectItem>
@@ -226,6 +264,102 @@ export default function PropertyRegistrationForm() {
                       Step 1 of 5
                     </Badge>
                   </div>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Bedrooms *
+                    </Label>
+                    <Input
+                      value={bedrooms}
+                      onChange={(e) => setBedrooms(e.target.value)}
+                      type="number"
+                      placeholder="Number of bedrooms"
+                      className="h-11 border-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Bathrooms *
+                    </Label>
+                    <Input
+                      value={bathrooms}
+                      onChange={(e) => setBathrooms(e.target.value)}
+                      type="number"
+                      placeholder="Number of bathrooms"
+                      className="h-11 border-slate-200"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Square Feet *
+                    </Label>
+                    <Input
+                      value={squareFeet}
+                      onChange={(e) => setSquareFeet(e.target.value)}
+                      type="number"
+                      placeholder="Square feet"
+                      className="h-11 border-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Lot Size
+                    </Label>
+                    <Input
+                      value={lotSize}
+                      onChange={(e) => setLotSize(e.target.value)}
+                      placeholder="Lot size"
+                      className="h-11 border-slate-200"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Year Built
+                    </Label>
+                    <Input
+                      value={yearBuilt}
+                      onChange={(e) => setYearBuilt(e.target.value)}
+                      type="number"
+                      placeholder="Year built"
+                      className="h-11 border-slate-200"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      HOA Fees
+                    </Label>
+                    <Input
+                      value={hoaFees}
+                      onChange={(e) => setHoaFees(e.target.value)}
+                      type="number"
+                      placeholder="HOA fees"
+                      className="h-11 border-slate-200"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="listed-date"
+                    className="text-sm font-medium text-slate-700"
+                  >
+                    Listed Date
+                  </Label>
+                  <Input
+                    value={listedDate}
+                    onChange={(e) => setListedDate(e.target.value)}
+                    id="listed-date"
+                    type="date"
+                    className="h-11 border-slate-200"
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -260,7 +394,10 @@ export default function PropertyRegistrationForm() {
                       id="Province"
                       required
                       className="form-control border"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
                     >
+                      <option value="">Select Province/City</option>
                       <option value="Phom Phenh(Capital City)">
                         Phom Phenh(Capital City)
                       </option>
@@ -296,7 +433,7 @@ export default function PropertyRegistrationForm() {
               </TabsContent>
 
               <TabsContent value="features" className="p-6">
-                <PropertyFeatures />
+                <PropertyFeatures onChange={handleFeaturesChange} />
               </TabsContent>
 
               <TabsContent value="images" className="p-6">

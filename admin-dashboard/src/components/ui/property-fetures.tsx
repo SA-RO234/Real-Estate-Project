@@ -13,8 +13,12 @@ interface FeatureSection {
   features: string[];
   isExpanded: boolean;
 }
+interface PropertyFeaturesProps {
+  onChange?: (selectedFeatures: number[]) => void;
+}
 
-export default function PropertyFeatures() {
+
+export default function PropertyFeatures({ onChange }: PropertyFeaturesProps) {
   const [selectedFeatures, setSelectedFeatures] = useState<Set<string>>(
     new Set()
   );

@@ -1,7 +1,7 @@
 
 export const fetchProperties = async (page: number = 1, limit: number = 4) => {
   const response = await fetch(
-    `https://real-estate-clientside2.onrender.com/?page=${page}&limit=${limit}`
+    `https://real-estate-clientside2.onrender.com`
   );
   const data = await response.json();
   const totalItems = response.headers.get("X-Total-Count")

@@ -216,7 +216,7 @@ class PropertyModel
             return false;
         }
     }
-
+    
     public function getPropertiesByFilter($bedrooms, $location_id, $minPrice, $maxPrice, $propertyTypeId)
     {
         try {
