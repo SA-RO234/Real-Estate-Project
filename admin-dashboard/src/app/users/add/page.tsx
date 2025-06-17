@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,14 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, UserPlus, Mail, Phone, Shield } from "lucide-react";
 import type { UserFormData } from "@/app/lib/types/usersType";
 import { ToastContainer, toast } from "react-toastify";
@@ -30,10 +21,7 @@ interface UserRegistrationFormProps {
   loading?: boolean;
 }
 
-export default function UserRegistrationForm({
-  onSubmit,
-  loading: propLoading,
-}: UserRegistrationFormProps) {
+export default function Page() {
   const [formData, setFormData] = useState<UserFormData>({
     name: "",
     email: "",
@@ -44,7 +32,6 @@ export default function UserRegistrationForm({
     avatar: "",
     status: 1,
   });
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [acceptTerms, setAcceptTerms] = useState(false);
