@@ -38,7 +38,7 @@ const data = {
       url: "/property",
       icon: HousePlus,
       children: [
-        { title: "List Property", url: "/property", icon: List },
+        { title: "View Properties", url: "/property", icon: List },
         {
           title: "Add Property",
           url: "/property/add",
@@ -48,11 +48,6 @@ const data = {
           title: "Property Type",
           url: "/property/propetyType",
           icon: Building,
-        },
-        {
-          title: "Property City",
-          url: "/property/propertyEachCity",
-          icon: MapPinHouse,
         },
         {
           title: "Property Feature",
@@ -78,6 +73,19 @@ const data = {
       //   { title: "All Users", url: "/users", icon: List },
       //   { title: "Add User", url: "/users/add", icon: PlusCircle },
       // ],
+    },
+    {
+      title: "Locations",
+      url: "/Location",
+      icon: MapPinHouse,
+      children: [
+        {
+          title: "Cities / Property Cities",
+          url: "/property/propertyEachCity",
+          icon: MapPinHouse,
+        },
+        { title: "Add City", url: "", icon: PlusCircle },
+      ],
     },
     {
       title: "Messages",

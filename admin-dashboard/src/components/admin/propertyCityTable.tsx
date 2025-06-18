@@ -11,8 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-export default function UserTable({users}:any) {
-     
+export default function LocationTable({ location }: any) {
   const handleEdit = (id: number) => {
     // Implement edit functionality
     console.log(`Edit user with ID: ${id}`);
@@ -32,22 +31,13 @@ export default function UserTable({users}:any) {
                 ID
               </TableHead>
               <TableHead className="text-center text-[15px] font-bold">
-                Name
+                City/Province
               </TableHead>
               <TableHead className="text-center text-[15px] font-bold">
-                Profile
+                Country
               </TableHead>
               <TableHead className="text-center text-[15px] font-bold">
-                Email
-              </TableHead>
-              <TableHead className="text-center text-[15px] font-bold">
-                Phone
-              </TableHead>
-              <TableHead className="text-center text-[15px] font-bold">
-                Status
-              </TableHead>
-              <TableHead className="text-center text-[15px] font-bold">
-                Create At
+                Images
               </TableHead>
               <TableHead className="text-center text-[15px] font-bold">
                 Action
@@ -55,27 +45,25 @@ export default function UserTable({users}:any) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user: any) => (
-              <TableRow key={user.id} className="border-t border-gray-200">
-                <TableCell className="text-center">{user.id}</TableCell>
-                <TableCell className="text-center">{user.name}</TableCell>
+            {location.map((location: any) => (
+              <TableRow key={location.id} className="border-t border-gray-200">
+                <TableCell className="text-center">{location.id}</TableCell>
+                <TableCell className="text-center">{location.city}</TableCell>
+                <TableCell className="text-center">{location.country}</TableCell>
                 <TableCell className="text-center flex justify-center">
                   <img
-                    src={user.avatar}
+                    src={location.city_image}
                     className="w-[50px]  h-[50px] object-cover rounded-full"
                     alt=""
                   />
                 </TableCell>
-                <TableCell className="text-center">{user.email}</TableCell>
-                <TableCell className="text-center">{user.phone}</TableCell>
-                <TableCell className="text-center">{user.online}</TableCell>
-                <TableCell className="text-center">{user.created_at}</TableCell>
+
                 <TableCell>
                   <div className="flex justify-center gap-2">
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleEdit(user.id)}
+                      onClick={() => handleEdit(location.id)}
                       aria-label="Edit"
                     >
                       <Pencil className="h-4 w-4 text-gray-500" />
@@ -83,7 +71,7 @@ export default function UserTable({users}:any) {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => handleDelete(location.id)}
                       aria-label="Delete"
                     >
                       <Trash2 className="h-4 w-4 text-gray-500" />

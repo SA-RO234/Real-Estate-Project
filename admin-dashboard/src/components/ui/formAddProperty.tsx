@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState  ,useCallback} from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,11 +19,11 @@ import { Home, MapPin, Star, Camera, DollarSign } from "lucide-react";
 import PropertyImageUpload from "@/components/ui/property-image-upload";
 import PropertyFeatures from "@/components/ui/property-fetures";
 import axios from "axios";
-import { parse } from "path";
 
 export default function PropertyRegistrationForm() {
   const [activeTab, setActiveTab] = useState("general");
-
+  const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
+  const [userId, setUserId] = useState<number | null>(null);
   // Add state for form fields
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
@@ -44,13 +44,23 @@ export default function PropertyRegistrationForm() {
   const [location, setLocation] = useState("");
   const [features, setFeatures] = useState<number[]>([]); // Array of feature IDs
   const [selectedPropertyTypeId, setSelectedPropertyTypeId] = useState<string>("");
-  // Example: user_id is hardcoded, replace with actual user logic if needed
-  // const userId = JSON.parse(localStorage.getItem("user"))
-  const userId = 1;
-  // Handle features selection from PropertyFeatures component
-  const handleFeaturesChange = (selectedFeatures: number[]) => {
-    setFeatures(selectedFeatures);
-  };
+  
+  const handleFeaturesChange = useCallback((features: number[]) => {
+    setSelectedFeatures(features);
+  }, []);
+  
+  useEffect(() => {
+    // Only runs on client
+    const adminStr = localStorage.getItem("admin");
+    if (adminStr) {
+      try {
+        const admin = JSON.parse(adminStr);
+        setUserId(admin.id);
+      } catch (e) {
+        setUserId(null);
+      }
+    }
+  }, []);
 
   // Handle form submission
   const handleCreateProperty = async () => {
@@ -66,7 +76,7 @@ export default function PropertyRegistrationForm() {
       status: propertyStatus,
       listed_date: listedDate,
       hoa_fees: Number(hoaFees),
-      location_id: Number(location) , // or whatever default you want
+      location_id: Number(location), // or whatever default you want
       property_type_id: Number(selectedPropertyTypeId),
       property_for: propertyFor,
       user_id: userId,

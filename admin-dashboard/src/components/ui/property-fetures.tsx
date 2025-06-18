@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
 interface FeatureSection {
   id: number;
   name: string;
@@ -20,7 +19,7 @@ export default function PropertyFeatures({ onChange }: PropertyFeaturesProps) {
 
   // Fetch features from API
   useEffect(() => {
-    fetch("https://real-estate-clientside2.onrender.com/propertyFeature")
+    fetch("https://real-estate-clientside2.onrender.com/propertyFeature.php")
       .then((res) => res.json())
       .then((data) => setFeatures(data))
       .catch((err) => console.error("Failed to fetch features", err));
