@@ -14,13 +14,13 @@ $input = json_decode(file_get_contents("php://input"), true);
 
 switch ($method) {
     case 'GET':
-        // if (isset($_GET['id'])) {
-        //     $result = $controller->getLocationById($_GET['id']);
-        //     echo json_encode($result);
-        // } else {
+        if (isset($_GET['only']) && $_GET['only'] === 'city') {
+            $result = $controller->getCityName();
+            echo json_encode($result, JSON_PRETTY_PRINT);
+        } else {
             $result = $controller->getAllLocations();
-            echo json_encode($result,JSON_PRETTY_PRINT);
-        // }
+            echo json_encode($result, JSON_PRETTY_PRINT);
+        }
         break;
 
     case 'POST':

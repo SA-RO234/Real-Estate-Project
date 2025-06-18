@@ -14,11 +14,13 @@ class locationController
         return $this->model->getAllLocations();
     }
 
-    // Get a location by ID
-    // public function getLocationById($id)
-    // {
-    //     return $this->model->getLocationById($id);
-    // }
+    // Get only name
+
+    public function getCityName()
+    {
+        return $this->model->getCityName();
+    }
+
 
     // Add a new location
     public function addLocation($city, $country, $city_image)

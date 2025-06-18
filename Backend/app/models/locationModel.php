@@ -15,7 +15,13 @@ class locationModel{
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
+    // Get only city names
+    public function getCityName()
+    {
+        $stmt = $this->db->prepare("SELECT city FROM locations");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
     // // Get a location by ID
     // public function getLocationById($id)
     // {
