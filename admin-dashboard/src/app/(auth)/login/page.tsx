@@ -26,6 +26,7 @@ export default function AdminLoginForm() {
       const response = await axios.post(
         "https://real-estate-clientside2.onrender.com/users",
         {
+          admin_login: true,
           email,
           password,
         }

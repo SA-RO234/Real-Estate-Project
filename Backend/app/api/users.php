@@ -31,33 +31,13 @@ $routes = [
         $input = json_decode(file_get_contents("php://input"), true);
 
         // Registration
-        if (
-            isset($input['name']) && isset($input["email"]) &&
-            isset($input['phone']) && isset($input["password"]) &&
-            isset($input['role'])
-        ) {
+        if (isset($input['name']) && isset($input["email"]) && isset($input['phone']) && isset($input["password"]) && isset($input['role'])) {
             $usersController->register($input);
-        }
-
-        // Contact message
-        elseif (
-            isset($input['name']) &&
-            isset($input['email']) &&
-            isset($input['phone']) &&
-            isset($input['subject']) &&
-            isset($input['message'])
-        ) {
-            $contactData = [
-                'name' => $input['name'],
-                'email' => $input['email'],
-                'phone' => $input['phone'],
-                'subject' => $input['subject'],
-                'contact_message' => $input['message']
-            ];
-            $usersController->sendMessageToAdmin($contactData);
-        }
-        // Login
-        elseif (isset($input['email']) && isset($input['password'])) {
+        } elseif (isset($input['name']) && isset($input['email']) && isset($input['phone']) && isset($input['subject']) && isset($input['message'])) {
+            // ...existing code...
+        } elseif (isset($input['admin_login']) && isset($input['email']) && isset($input['password'])) {
+            $usersController->adminLogin($input['email'], $input['password']);
+        } elseif (isset($input['email']) && isset($input['password'])) {
             Session::Start();
             $user = $usersController->login($input['email'], $input['password']);
             if ($user && isset($user['error'])) {
@@ -74,12 +54,10 @@ $routes = [
                 echo json_encode(['message' => 'Invalid email or password.']);
             }
         } elseif (isset($input['forgot_password']) && !empty($input['email'])) {
-            echo json_encode($resetController->requestReset($input['email']));
+            // ...existing code...
         } elseif (isset($input['reset_password']) && !empty($input['token']) && !empty($input['password'])) {
-            echo json_encode($resetController->resetPassword($input['token'], $input['password']));
-        }
-        // Invalid request
-        else {
+            // ...existing code...
+        } else {
             echo json_encode(["message" => "Invalid request: Missing required fields."]);
         }
     },

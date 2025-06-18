@@ -127,8 +127,25 @@ class UserController
         }
     }
 
+    //   Admin login Controller
+    public function adminLogin($email, $password)
+    {
+        $result = $this->userModel->AdminLoginModel($email, $password);
+        if ($result) {
+            echo json_encode([
+                "success" => true,
+                "message" => "Admin login successful.",
+                "user" => $result
+            ]);
+        } else {
+            http_response_code(401);
+            echo json_encode([
+                "success" => false,
+                "message" => "Invalid admin credentials."
+            ]);
+        }
+    }
 
-
-
+     
 
 }

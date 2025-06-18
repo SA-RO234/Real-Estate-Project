@@ -90,6 +90,29 @@ class User
         }
     }
 
+
+    //   Admin login Model
+    public function AdminLoginModel($email, $password)
+    {
+        try {
+            $sql = "SELECT * FROM users WHERE email = :email AND role = 'admin'";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([':email' => $email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['password'])) {
+                // Successful admin login
+                return $user;
+            }
+            // Invalid credentials or not an admin
+            return false;
+        } catch (PDOException $e) {
+            // Log or handle error as needed
+            return false;
+        }
+    }
+
+
     // Logout User
     public function logout()
     {
