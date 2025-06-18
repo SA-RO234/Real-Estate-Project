@@ -28,9 +28,9 @@ export default function PropertyRegistrationForm() {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [propertyType, setPropertyType] = useState<
-    { id: number; City: string }[]
+    { id: number; name: string }[]
   >([]);
-  const [selectedPropertyType, setSelectedPropertyType] = useState<string>("");
+
   const [propertyStatus, setPropertyStatus] = useState("");
   const [description, setDescription] = useState("");
   const [propertyFor, setPropertyFor] = useState("");
@@ -43,7 +43,7 @@ export default function PropertyRegistrationForm() {
   const [listedDate, setListedDate] = useState("");
   const [location, setLocation] = useState("");
   const [features, setFeatures] = useState<number[]>([]); // Array of feature IDs
-
+  const [selectedPropertyTypeId, setSelectedPropertyTypeId] = useState<string>("");
   // Example: user_id is hardcoded, replace with actual user logic if needed
   // const userId = JSON.parse(localStorage.getItem("user"))
   const userId = 1;
@@ -66,8 +66,8 @@ export default function PropertyRegistrationForm() {
       status: propertyStatus,
       listed_date: listedDate,
       hoa_fees: Number(hoaFees),
-      location_id: location ? Number(location) : 1, // or whatever default you want
-      property_type_id: selectedPropertyType ? Number(selectedPropertyType) : 1,
+      location_id: Number(location) , // or whatever default you want
+      property_type_id: Number(selectedPropertyTypeId),
       property_for: propertyFor,
       user_id: userId,
       features,
@@ -82,6 +82,8 @@ export default function PropertyRegistrationForm() {
           body: JSON.stringify(propertyData),
         }
       );
+      console.log(propertyData);
+      
       if (response.ok) {
         alert("Property created successfully!");
       } else {
@@ -221,8 +223,8 @@ export default function PropertyRegistrationForm() {
                         Property Type *
                       </Label>
                       <Select
-                        value={selectedPropertyType}
-                        onValueChange={setSelectedPropertyType}
+                        value={selectedPropertyTypeId}
+                        onValueChange={setSelectedPropertyTypeId}
                       >
                         <SelectTrigger className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500">
                           <SelectValue placeholder="Select property type" />
@@ -230,7 +232,7 @@ export default function PropertyRegistrationForm() {
                         <SelectContent className="bg-black text-white">
                           {propertyType.map((e) => (
                             <SelectItem key={e.id} value={e.id.toString()}>
-                              {e.City}
+                              {e.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
