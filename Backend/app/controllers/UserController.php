@@ -37,7 +37,7 @@ class UserController
         $phone = $data['phone'];
         $name = $data['name'];
         $avatar = $data['avatar'];
-        $result = $this->userModel->register($name, $email, $phone, $role, $password,$avatar);
+        $result = $this->userModel->register($name, $email, $phone, $role, $password, $avatar);
         // Call the model to register the user
         if ($result === true) {
             echo json_encode(["message" => "User registered successfully!"]);
@@ -131,21 +131,11 @@ class UserController
     public function adminLogin($email, $password)
     {
         $result = $this->userModel->AdminLoginModel($email, $password);
-        if ($result) {
-            echo json_encode([
-                "success" => true,
-                "message" => "Admin login successful.",
-                "user" => $result
-            ]);
-        } else {
-            http_response_code(401);
-            echo json_encode([
-                "success" => false,
-                "message" => "Invalid admin credentials."
-            ]);
+
+        if (!$result) {
+            // Debug: log or print why login failed
+            error_log("Login failed for $email with password $password");
         }
+        return $result;
     }
-
-     
-
 }

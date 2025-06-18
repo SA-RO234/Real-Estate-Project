@@ -36,7 +36,20 @@ $routes = [
         } elseif (isset($input['name']) && isset($input['email']) && isset($input['phone']) && isset($input['subject']) && isset($input['message'])) {
             // ...existing code...
         } elseif (isset($input['admin_login']) && isset($input['email']) && isset($input['password'])) {
-            $usersController->adminLogin($input['email'], $input['password']);
+            Session::Start();
+            $admin =  $usersController->adminLogin($input['email'], $input['password']);
+            if ($admin) {
+                Session::set('admin_id', $admin['id']);
+                Session::set('email', $admin['email']);
+                Session::set('role', $admin['role']);
+                echo json_encode([
+                    'message' => "Login Successfully",
+                    'session_id' => session_id(),
+                    'admin' => $admin
+                ]);
+            } else {
+                echo json_encode(['message' => 'Invalid admin credentials.']);
+            }
         } elseif (isset($input['email']) && isset($input['password'])) {
             Session::Start();
             $user = $usersController->login($input['email'], $input['password']);
