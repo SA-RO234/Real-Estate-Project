@@ -33,10 +33,10 @@ export default function AdminLoginForm() {
       );
       if (response.data.session_id) {
         setIsUnlocking(true);
-        toast.success("Profile updated successfully!");
+        toast.success(response.data.message);
         setTimeout(() => {
           localStorage.setItem("adminsession_id", response.data.session_id);
-          localStorage.setItem("admin", JSON.stringify(response.data.user));
+          localStorage.setItem("admin", JSON.stringify(response.data.admin));
           window.location.href = "/";
         }, 1500); // Show animation for 1.5 seconds
       } else {
