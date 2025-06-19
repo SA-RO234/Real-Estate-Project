@@ -77,7 +77,7 @@ class PropertyModel
     }
 
 
-    // Insert a new property into database
+    // Add property 
     public function addProperty(
         $title,
         $description,
@@ -94,17 +94,17 @@ class PropertyModel
         $status,
         $listed_date,
         $hoa_fees,
-        $features = []
+        $features = [],
+        $images = [] // <-- add this parameter
     ) {
         try {
-            // Start transaction
             $this->conn->beginTransaction();
             $query = "INSERT INTO properties (
                 user_id, title, description, price, location_id, property_for, property_type_id,
                 bedrooms, bathrooms, square_feet, lot_size, year_built, status, listed_date, hoa_fees
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
-
+    
             $stmt->execute([
                 $user_id,
                 $title,
@@ -122,9 +122,10 @@ class PropertyModel
                 $listed_date,
                 $hoa_fees
             ]);
-
+    
             $property_id = $this->conn->lastInsertId();
-
+    
+            // Insert features
             if (!empty($features)) {
                 $featureQuery = "INSERT INTO property_features (property_id, feature_id) VALUES (?, ?)";
                 $featureStmt = $this->conn->prepare($featureQuery);
@@ -132,10 +133,18 @@ class PropertyModel
                     $featureStmt->execute([$property_id, $feature_id]);
                 }
             }
-
-            // Commit transaction
+    
+            // Insert images
+            if (!empty($images)) {
+                $imageQuery = "INSERT INTO images (property_id, image_url, image_for_ad) VALUES (?, ?, ?)";
+                $imageStmt = $this->conn->prepare($imageQuery);
+                foreach ($images as $img) {
+                    // $img should be ['url' => ..., 'image_for_ad' => 0 or 1]
+                    $imageStmt->execute([$property_id, $img['url'], $img['image_for_ad'] ?? 0]);
+                }
+            }
+    
             $this->conn->commit();
-            // Return the new property ID
             return $property_id;
         } catch (PDOException $e) {
             error_log("Error inserting property: " . $e->getMessage());
@@ -143,6 +152,7 @@ class PropertyModel
             return false;
         }
     }
+    // ...existing code...
 
     // Update an existing property
     public function updateProperty($id, $title, $description, $price, $location_id)

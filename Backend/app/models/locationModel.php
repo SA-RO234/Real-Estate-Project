@@ -22,14 +22,6 @@ class locationModel{
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
-    // // Get a location by ID
-    // public function getLocationById($id)
-    // {
-    //     $stmt = $this->db->prepare("SELECT * FROM locations WHERE id = :id");
-    //     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    //     $stmt->execute();
-    //     return $stmt->fetch(PDO::FETCH_ASSOC);
-    // }
 
     // Add a new location
     public function addLocation($city, $country, $city_image)

@@ -4,8 +4,7 @@ require_once '../../config/database.php';
 header("Content-Type: application/json"); // Ensure JSON response
 
 
-class PropertyController
-{
+class PropertyController{
     private $property;
     public function __construct()
     {
@@ -69,7 +68,7 @@ class PropertyController
     {
         try {
             $data = json_decode(file_get_contents("php://input"), true);
-
+    
             // List required fields
             $requiredFields = [
                 'title',
@@ -81,7 +80,7 @@ class PropertyController
                 'user_id',
                 'status'
             ];
-
+    
             // Check for missing fields
             foreach ($requiredFields as $field) {
                 if (empty($data[$field])) {
@@ -93,7 +92,7 @@ class PropertyController
                     return;
                 }
             }
-
+    
             // Extract data with defaults for optional fields
             $title = $data['title'];
             $description = $data['description'];
@@ -111,8 +110,9 @@ class PropertyController
             $listed_date = $data['listed_date'] ?? date('Y-m-d');
             $hoa_fees = $data['hoa_fees'] ?? null;
             $features = $data['features'] ?? [];
-
-            // Call the model to add the property
+            $images = $data['images'] ?? []; // <-- Add this line
+    
+            // Call the model to add the property (pass $images)
             $result = $this->property->addProperty(
                 $title,
                 $description,
@@ -129,9 +129,10 @@ class PropertyController
                 $status,
                 $listed_date,
                 $hoa_fees,
-                $features
+                $features,
+                $images // <-- Pass images to model
             );
-
+    
             if ($result) {
                 echo json_encode([
                     "success" => true,
@@ -150,7 +151,7 @@ class PropertyController
             echo json_encode(["error" => $e->getMessage()]);
         }
     }
-
+   
 
     public function updateProperty()
     {
@@ -295,5 +296,15 @@ class PropertyController
         } catch (Exception $e) {
             echo json_encode(['error' => $e->getMessage()]);
         }
+    }
+
+    public function addPropertyAndReturnId($propertyData){
+        $db = (new Database())->getConnection();
+        $sql = "INSERT INTO properties (name, address, city, ...) VALUES (:name, :address, :city, ...)";
+        $stmt = $db->prepare($sql);
+        if ($stmt->execute(/* params */)) {
+            return $db->lastInsertId();
+        }
+        return false;
     }
 }
