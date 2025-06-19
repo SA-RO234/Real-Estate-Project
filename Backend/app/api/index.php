@@ -29,7 +29,6 @@ require_once __DIR__ . "/../controllers/PropertyController.php";
 require_once __DIR__ . "/../controllers/UploadImageController.php"; // Add this line
 
 $properTyController = new PropertyController();
-$imageController = new UploadImageController();
 $method = $_SERVER["REQUEST_METHOD"];
 $request = json_decode(file_get_contents("php://input"), true);
 
