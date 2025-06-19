@@ -8,8 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useEffect } from "react";
 
 export function SectionCards() {
+  useEffect(() => {
+      // const fetch
+  }, []);
   return (
     <div className="*:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 h-[200px] @5xl/main:grid-cols-4 grid grid-cols-1 gap-4  *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card">
       <Card className="@container/card border-black border-5">

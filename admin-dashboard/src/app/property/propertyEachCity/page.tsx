@@ -6,16 +6,14 @@ interface location {
   id: number;
   city: string;
   country: string;
-  image: string;
+  city_image: string;
 }
 const page = () => {
   const [location , setLocations] = useState<location[]>([]);
   useEffect(() => {
     const fetchLocation = async () => {
       try {
-        const response = await axios.get(
-          "https://real-estate-clientside2.onrender.com/location.php"
-        );
+        const response = await axios.get("https://real-estate-clientside2.onrender.com/location.php");
         setLocations(response.data);
       } catch (error) {
         console.error("Failed to fetch users: ", error);

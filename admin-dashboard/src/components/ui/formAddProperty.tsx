@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState  ,useCallback} from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -41,14 +41,21 @@ export default function PropertyRegistrationForm() {
   const [yearBuilt, setYearBuilt] = useState("");
   const [hoaFees, setHoaFees] = useState("");
   const [listedDate, setListedDate] = useState("");
-  const [location, setLocation] = useState("");
+  const [locations, setLocations] = useState<{ id?: number; city: string }[]>(
+    []
+  );
+  const [images, setImages] = useState<{ url: string; image_for_ad: number }[]>(
+    []
+  );
+  const [selectedLocationId, setSelectedLocationId] = useState<string>("");
   const [features, setFeatures] = useState<number[]>([]); // Array of feature IDs
-  const [selectedPropertyTypeId, setSelectedPropertyTypeId] = useState<string>("");
-  
+  const [selectedPropertyTypeId, setSelectedPropertyTypeId] =
+    useState<string>("");
+
   const handleFeaturesChange = useCallback((features: number[]) => {
     setSelectedFeatures(features);
   }, []);
-  
+
   useEffect(() => {
     // Only runs on client
     const adminStr = localStorage.getItem("admin");
@@ -76,11 +83,12 @@ export default function PropertyRegistrationForm() {
       status: propertyStatus,
       listed_date: listedDate,
       hoa_fees: Number(hoaFees),
-      location_id: Number(location), // or whatever default you want
+      location_id: Number(selectedLocationId),
       property_type_id: Number(selectedPropertyTypeId),
       property_for: propertyFor,
       user_id: userId,
-      features,
+      features : selectedFeatures,
+      images,
     };
 
     try {
@@ -92,12 +100,12 @@ export default function PropertyRegistrationForm() {
           body: JSON.stringify(propertyData),
         }
       );
-      console.log(propertyData);
-      
+  
       if (response.ok) {
         alert("Property created successfully!");
       } else {
-        alert("Failed to create property.");
+        const errorText = await response.text();
+        alert("Failed to create property.\n" + errorText);
       }
     } catch (error) {
       alert("Error: " + error);
@@ -110,12 +118,44 @@ export default function PropertyRegistrationForm() {
         const responce = await axios.get(
           "https://real-estate-clientside2.onrender.com?propertyType"
         );
-        setPropertyType(responce.data);
+        setPropertyType(Array.isArray(responce.data) ? responce.data : []);
       } catch (error) {
         console.error("Fail To fetch  property Type ! ", error);
+        setPropertyType([]); // fallback
       }
     };
     FetchPropertyType();
+  }, []);
+
+  //  Location
+  useEffect(() => {
+    const fetchLocation = async () => {
+      try {
+        const responce = await axios.get(
+          "https://real-estate-clientside2.onrender.com/location.php?only=city"
+        );
+        // If response is array of strings, convert to array of objects
+        let locationsArray: { id?: number; city: string }[] = [];
+        if (Array.isArray(responce.data)) {
+          locationsArray = responce.data.map((city: string, idx: number) => ({
+            id: idx + 1, // Generate a temporary id
+            city,
+          }));
+        } else if (Array.isArray(responce.data.locations)) {
+          locationsArray = responce.data.locations.map(
+            (city: string, idx: number) => ({
+              id: idx + 1,
+              city,
+            })
+          );
+        }
+        setLocations(locationsArray);
+      } catch (error) {
+        console.error("Fail To fetch city!", error);
+        setLocations([]); // fallback
+      }
+    };
+    fetchLocation();
   }, []);
 
   return (
@@ -135,13 +175,6 @@ export default function PropertyRegistrationForm() {
                 >
                   <Home className="h-4 w-4" />
                   <span className="hidden sm:inline">General</span>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="location"
-                  className="flex items-center gap-2 data-[state=active]:bg-white"
-                >
-                  <MapPin className="h-4 w-4" />
-                  <span className="hidden sm:inline">Location</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="features"
@@ -240,11 +273,16 @@ export default function PropertyRegistrationForm() {
                           <SelectValue placeholder="Select property type" />
                         </SelectTrigger>
                         <SelectContent className="bg-black text-white">
-                          {propertyType.map((e) => (
-                            <SelectItem key={e.id} value={e.id.toString()}>
-                              {e.name}
-                            </SelectItem>
-                          ))}
+                          {(Array.isArray(propertyType)
+                            ? propertyType
+                            : []
+                          ).map((e) =>
+                            e && e.id !== undefined ? (
+                              <SelectItem key={e.id} value={e.id.toString()}>
+                                {e.name}
+                              </SelectItem>
+                            ) : null
+                          )}
                         </SelectContent>
                       </Select>
                     </div>
@@ -275,10 +313,31 @@ export default function PropertyRegistrationForm() {
                     </Select>
                   </div>
 
-                  <div className="flex items-end">
-                    <Badge variant="secondary" className="h-fit">
-                      Step 1 of 5
-                    </Badge>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700">
+                      Location *
+                    </Label>
+                    <Select
+                      value={selectedLocationId}
+                      onValueChange={setSelectedLocationId}
+                    >
+                      <SelectTrigger className="h-11 border-slate-200 focus:border-blue-500 focus:ring-blue-500">
+                        <SelectValue placeholder="Select location" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-black text-white">
+                        {(Array.isArray(locations) ? locations : []).map(
+                          (loc) =>
+                            loc && loc.city ? (
+                              <SelectItem
+                                key={loc.id ?? loc.city}
+                                value={loc.id ? loc.id.toString() : loc.city}
+                              >
+                                {loc.city}
+                              </SelectItem>
+                            ) : null
+                        )}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
@@ -398,62 +457,12 @@ export default function PropertyRegistrationForm() {
                 </div>
               </TabsContent>
 
-              <TabsContent value="location" className="p-6">
-                <div className="flex  items-center justify-center h-64 text-slate-500">
-                  <div className="text-center  border p-5">
-                    <label htmlFor="Province" className="text-3xl font-bold">
-                      Province /City:
-                    </label>
-                    <span className="text-red-800 inline float-none">*</span>
-                    <select
-                      name="Province"
-                      id="Province"
-                      required
-                      className="form-control border"
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                    >
-                      <option value="">Select Province/City</option>
-                      <option value="Phom Phenh(Capital City)">
-                        Phom Phenh(Capital City)
-                      </option>
-                      <option value="Kampong Cham">Kampong Cham</option>
-                      <option value="Ta Keo">Ta Keo</option>
-                      <option value="Battambang">Battambang</option>
-                      <option value="Koh kong ">Koh kong</option>
-                      <option value="Mondulkiri">Mondulkiri</option>
-                      <option value="Rattanakiri">Rattanakiri</option>
-                      <option value="Siem Reap">Siem Reap</option>
-                      <option value="Prey Veng">Prey Veng</option>
-                      <option value="Kampong Chanang">Kampong Chanang</option>
-                      <option value="Banteay Meanchey">Banteay Meanchey</option>
-                      <option value="Svay Rieng">Svay Rieng</option>
-                      <option value="Ousdom Meanchey">Ousdom Meanchey</option>
-                      <option value="Kep">Kep</option>
-                      <option value="Preah Vihear">Preah Vihear</option>
-                      <option value="Kratie">Kratie</option>
-                      <option value="Tbong Kmom">Tbong Kmom</option>
-                      <option value="Kampot">Kampot</option>
-                      <option value="Preah Sihanouk">Preah Sihanouk</option>
-                      <option value="Kandal">Kandal</option>
-                      <option value="Pailin">Pailin</option>
-                      <option value="Tbong Khmum">Tbong Khmum</option>
-                      <option value="Stung Treng">Stung Treng</option>
-                      <option value="Kampong Thom">Kampong Thom</option>
-                      <option value="Oddar Meanchey">Oddar Meanchey</option>
-                      <option value="Pursat">Pursat</option>
-                      <option value="Kampong Speu">Kampong Speu</option>
-                    </select>
-                  </div>
-                </div>
-              </TabsContent>
-
               <TabsContent value="features" className="p-6">
                 <PropertyFeatures onChange={handleFeaturesChange} />
               </TabsContent>
 
               <TabsContent value="images" className="p-6">
-                <PropertyImageUpload />
+                <PropertyImageUpload images={images} setImages={setImages} />
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -463,9 +472,6 @@ export default function PropertyRegistrationForm() {
               Back
             </Button>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-slate-600">
-                Save progress automatically
-              </span>
               <Button
                 className="px-8 bg-blue-600 hover:bg-blue-700"
                 onClick={handleCreateProperty}
