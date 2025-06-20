@@ -30,28 +30,29 @@ class PropertyModel
     }
 
     //   Retrieve all property from database 
-    public function getAllproperties(){
-    try {
-        $query = "SELECT 
-                    p.*, 
-                    locations.*,
-                    COALESCE(p.property_for, 'unknown') AS property_for,
-                    (SELECT image_url FROM images WHERE property_id = p.id LIMIT 1) AS image_url
-                  FROM {$this->table_name} p
-                  INNER JOIN locations ON p.location_id = locations.id
-                  WHERE p.status IS NULL OR p.status != 'deleted'";
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        return $stmt;
-    } catch (PDOException $e) {
-        die('Database Error : ' . $e->getMessage());
+    public function getAllProperties()
+    {
+        try {
+            $query = "SELECT 
+                        p.*, 
+                        locations.*,
+                        COALESCE(p.property_for, 'unknown') AS property_for,
+                       (SELECT image_url FROM images WHERE property_id =  p.\"propertyID\" LIMIT 1) AS image_url
+                      FROM {$this->table_name} p
+                      INNER JOIN locations ON p.location_id = locations.id
+                      WHERE p.status IS NULL OR p.status != 'deleted'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+            return $stmt;
+        } catch (PDOException $e) {
+            die('Database Error : ' . $e->getMessage());
+        }
     }
-}
 
     public function getPropertyforAd()
     {
         try {
-            $query = "SELECT p.id, p.title , p.description ,images.image_url AS ad_image_url 
+            $query = "SELECT p.propertyID, p.title , p.description ,images.image_url AS ad_image_url 
                     FROM properties p 
                     LEFT JOIN images ON images.property_id = p.id AND images.imageForAd = 1";
             $stmt = $this->conn->prepare($query);
@@ -67,7 +68,7 @@ class PropertyModel
     {
         try {
             global $conn;
-            $stmt = $this->conn->prepare("SELECT * FROM  properties WHERE id = ?");
+            $stmt = $this->conn->prepare("SELECT * FROM  properties WHERE propertyID = ?");
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -104,7 +105,7 @@ class PropertyModel
                 bedrooms, bathrooms, square_feet, lot_size, year_built, status, listed_date, hoa_fees
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
-    
+
             $stmt->execute([
                 $user_id,
                 $title,
@@ -122,9 +123,9 @@ class PropertyModel
                 $listed_date,
                 $hoa_fees
             ]);
-    
+
             $property_id = $this->conn->lastInsertId();
-    
+
             // Insert features
             if (!empty($features)) {
                 $featureQuery = "INSERT INTO property_features (property_id, feature_id) VALUES (?, ?)";
@@ -133,7 +134,7 @@ class PropertyModel
                     $featureStmt->execute([$property_id, $feature_id]);
                 }
             }
-    
+
             // Insert images
             if (!empty($images)) {
                 $imageQuery = "INSERT INTO images (property_id, image_url, image_for_ad) VALUES (?, ?, ?)";
@@ -143,7 +144,7 @@ class PropertyModel
                     $imageStmt->execute([$property_id, $img['url'], $img['image_for_ad'] ?? 0]);
                 }
             }
-    
+
             $this->conn->commit();
             return $property_id;
         } catch (PDOException $e) {
@@ -152,11 +153,11 @@ class PropertyModel
             return false;
         }
     }
-  
+
     // Update an existing property
     public function updateProperty($id, $title, $description, $price, $location_id)
     {
-        $stmt = $this->conn->prepare("UPDATE properties SET title = ?, description = ?, price = ?, location_id = ? WHERE id = ?");
+        $stmt = $this->conn->prepare("UPDATE properties SET title = ?, description = ?, price = ?, location_id = ? WHERE propertyID = ?");
         $stmt->execute([$title, $description, $price, $location_id, $id]);
     }
 
@@ -165,14 +166,14 @@ class PropertyModel
     {
         try {
             // Check if property exists
-            $check = $this->conn->prepare("SELECT id FROM properties WHERE id = ?");
+            $check = $this->conn->prepare("SELECT propertyID FROM properties WHERE propertyID = ?");
             $check->execute([$id]);
             if ($check->rowCount() === 0) {
                 return "Property not found";
             }
 
             // Update status to 'deleted'
-            $stmt = $this->conn->prepare("UPDATE properties SET status = 'deleted' WHERE id = ?");
+            $stmt = $this->conn->prepare("UPDATE properties SET status = 'deleted' WHERE propertyID = ?");
             $stmt->execute([$id]);
 
             if ($stmt->rowCount() > 0) {
@@ -194,8 +195,8 @@ class PropertyModel
                 "SELECT 
                     pt.id AS property_type_id,
                     pt.name AS property_type_name,
-                    COUNT(p.id) AS count,
-                    (SELECT image_url FROM images WHERE property_id = MIN(p.id) LIMIT 1) AS image_url
+                    COUNT(p.propertyID) AS count,
+                    (SELECT image_url FROM images WHERE property_id = MIN(p.propertyID) LIMIT 1) AS image_url
                  FROM property_types pt
                  LEFT JOIN properties p ON p.property_type_id = pt.id
                  GROUP BY pt.id, pt.name"
@@ -233,7 +234,7 @@ class PropertyModel
             return false;
         }
     }
-    
+
     public function getPropertiesByFilter($bedrooms, $location_id, $minPrice, $maxPrice, $propertyTypeId)
     {
         try {
