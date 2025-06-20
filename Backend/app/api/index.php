@@ -19,6 +19,9 @@ if (str_ends_with($uri, '/users') || str_ends_with($uri, '/users.php')) {
 } elseif (str_ends_with($uri, '/messages') || str_ends_with($uri, '/messages.php')) {
     require_once __DIR__ . '/messages.php';
     exit();
+} elseif (str_ends_with($uri, '/images') || str_ends_with($uri, '/images.php')) {
+    require_once __DIR__ . '/uploadImage.php';
+    exit();
 }
 
 require_once __DIR__ . '/../../vendor/autoload.php';

@@ -52,9 +52,9 @@ class PropertyModel
     public function getPropertyforAd()
     {
         try {
-            $query = "SELECT p.propertyID, p.title , p.description ,images.image_url AS ad_image_url 
+            $query = "SELECT p.\"propertyID\", p.title , p.description ,images.image_url AS ad_image_url 
                     FROM properties p 
-                    LEFT JOIN images ON images.property_id = p.id AND images.imageForAd = 1";
+                    LEFT JOIN images ON images.property_id = p.\"propertyID\" AND images.image_for_ad = 1";
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
             return $stmt;
@@ -255,8 +255,8 @@ class PropertyModel
                 "SELECT 
                     pt.id AS property_type_id,
                     pt.name AS property_type_name,
-                    COUNT(p.propertyID) AS count,
-                    (SELECT image_url FROM images WHERE property_id = MIN(p.propertyID) LIMIT 1) AS image_url
+                    COUNT(p.\"propertyID\") AS count,
+                    (SELECT image_url FROM images WHERE property_id = MIN(p.\"propertyID\") LIMIT 1) AS image_url
                  FROM property_types pt
                  LEFT JOIN properties p ON p.property_type_id = pt.id
                  GROUP BY pt.id, pt.name"
