@@ -52,9 +52,8 @@ class PropertyModel
     public function getPropertyforAd()
     {
         try {
-            $query = "SELECT p.\"propertyID\", p.title , p.description ,images.image_url AS ad_image_url 
-                    FROM properties p 
-                    LEFT JOIN images ON images.property_id = p.\"propertyID\" AND images.image_for_ad = 1";
+            $query = "SELECT p.\"propertyID\", p.title , p.description ,images.image_url
+                    FROM properties p";
             $stmt = $this->conn->prepare($query);
             $stmt->execute();
             return $stmt;
