@@ -7,17 +7,21 @@ interface FeatureSection {
   id: number;
   name: string;
 }
+
 interface PropertyFeaturesProps {
+  value?: number[];
   onChange?: (selectedFeatures: number[]) => void;
 }
-
-export default function PropertyFeatures({ onChange }: PropertyFeaturesProps) {
+export default function PropertyFeatures({
+  value,
+  onChange,
+}: PropertyFeaturesProps) {
   const [selectedFeatures, setSelectedFeatures] = useState<Set<number>>(
     new Set()
   );
   const [features, setFeatures] = useState<FeatureSection[]>([]);
 
-  // Fetch features from API
+  // Fetch all features from API
   useEffect(() => {
     fetch("https://real-estate-clientside2.onrender.com/propertyFeature.php")
       .then((res) => res.json())
@@ -25,14 +29,28 @@ export default function PropertyFeatures({ onChange }: PropertyFeaturesProps) {
       .catch((err) => console.error("Failed to fetch features", err));
   }, []);
 
-  // Notify parent on change
+  // Sync with value prop for edit mode, but only if value changes
   useEffect(() => {
-    if (onChange) {
-      onChange(Array.from(selectedFeatures));
+    if (Array.isArray(value)) {
+      const valueSet = new Set(value);
+      let isDifferent = valueSet.size !== selectedFeatures.size;
+      if (!isDifferent) {
+        for (let v of valueSet) {
+          if (!selectedFeatures.has(v)) {
+            isDifferent = true;
+            break;
+          }
+        }
+      }
+      if (isDifferent) {
+        setSelectedFeatures(valueSet);
+      }
     }
-  }, [selectedFeatures, onChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(value)]);
 
-  const toggleFeature = (featureId: number) => {
+  // Only call onChange when user interacts
+  const handleToggleFeature = (featureId: number) => {
     setSelectedFeatures((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(featureId)) {
@@ -40,11 +58,19 @@ export default function PropertyFeatures({ onChange }: PropertyFeaturesProps) {
       } else {
         newSet.add(featureId);
       }
+      if (onChange) {
+        onChange(Array.from(newSet));
+      }
       return newSet;
     });
   };
 
-  const clearAllFeatures = () => setSelectedFeatures(new Set());
+  const clearAllFeatures = () => {
+    setSelectedFeatures(new Set());
+    if (onChange) {
+      onChange([]);
+    }
+  };
   const getSelectedCount = () => selectedFeatures.size;
 
   return (
@@ -78,7 +104,8 @@ export default function PropertyFeatures({ onChange }: PropertyFeaturesProps) {
             {features.map((feature) => (
               <button
                 key={feature.id}
-                onClick={() => toggleFeature(feature.id)}
+                type="button"
+                onClick={() => handleToggleFeature(feature.id)}
                 className={`px-4 py-2 rounded-md border-2 text-sm font-medium transition-all duration-200 hover:shadow-md ${
                   selectedFeatures.has(feature.id)
                     ? "border-green-500 bg-black text-green-700 shadow-sm"
@@ -107,7 +134,7 @@ export default function PropertyFeatures({ onChange }: PropertyFeaturesProps) {
                     key={feature.id}
                     variant="secondary"
                     className="bg-blue-100 text-blue-800 hover:bg-blue-200 cursor-pointer"
-                    onClick={() => toggleFeature(feature.id)}
+                    onClick={() => handleToggleFeature(feature.id)}
                   >
                     {feature.name}
                     <span className="ml-1 text-blue-600">×</span>

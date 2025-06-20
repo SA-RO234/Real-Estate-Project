@@ -19,8 +19,10 @@ import { Home, MapPin, Star, Camera, DollarSign } from "lucide-react";
 import PropertyImageUpload from "@/components/ui/property-image-upload";
 import PropertyFeatures from "@/components/ui/property-fetures";
 import axios from "axios";
-
-export default function PropertyRegistrationForm() {
+import { useParams } from "next/navigation"; // If using Next.js routing
+export default function PropertyEditForm() {
+  const params = useParams();
+  const propertyId = params?.id ? Number(params.id) : undefined;
   const [activeTab, setActiveTab] = useState("general");
   const [selectedFeatures, setSelectedFeatures] = useState<number[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
@@ -30,7 +32,7 @@ export default function PropertyRegistrationForm() {
   const [propertyType, setPropertyType] = useState<
     { id: number; name: string }[]
   >([]);
-
+  const [loading, setLoading] = useState(false);
   const [propertyStatus, setPropertyStatus] = useState("");
   const [description, setDescription] = useState("");
   const [propertyFor, setPropertyFor] = useState("");
@@ -67,66 +69,6 @@ export default function PropertyRegistrationForm() {
       }
     }
   }, []);
-
-  // Handle form submission
-  const handleCreateProperty = async () => {
-    if (
-      !title ||
-      !description ||
-      !price ||
-      !bedrooms ||
-      !bathrooms ||
-      !selectedPropertyTypeId ||
-      !selectedLocationId ||
-      !propertyFor ||
-      !propertyStatus ||
-      !userId ||
-      images.length === 0
-    ) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-    const propertyData = {
-      title,
-      description,
-      price: Number(price),
-      bedrooms: Number(bedrooms),
-      bathrooms: Number(bathrooms),
-      square_feet: Number(squareFeet),
-      lot_size: lotSize,
-      year_built: Number(yearBuilt),
-      status: propertyStatus,
-      listed_date: listedDate,
-      hoa_fees: Number(hoaFees),
-      location_id: Number(selectedLocationId),
-      property_type_id: Number(selectedPropertyTypeId),
-      property_for: propertyFor,
-      user_id: userId,
-      features : selectedFeatures,
-      images,
-    };
-
-    try {
-      const response = await fetch(
-        "https://real-estate-clientside2.onrender.com",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(propertyData),
-        }
-      );
-      console.log(propertyData);
-      
-      const result = await response.json();
-      if (response.ok && result.success) {
-        alert("Property created successfully!");
-      } else {
-        alert("Failed to create property.\n" + JSON.stringify(result));
-      }
-    } catch (error) {
-      alert("Error: " + error);
-    }
-  };
 
   useEffect(() => {
     const FetchPropertyType = async () => {
@@ -173,6 +115,119 @@ export default function PropertyRegistrationForm() {
     };
     fetchLocation();
   }, []);
+
+  useEffect(() => {
+    if (!propertyId) return;
+    axios
+      .get(
+        `https://real-estate-clientside2.onrender.com/propertyFeature.php?property_id=${propertyId}`
+      )
+      .then((res) => {
+        // res.data is an array of feature objects
+        if (Array.isArray(res.data)) {
+          setSelectedFeatures(res.data.map((f: any) => f.id));
+        } else {
+          setSelectedFeatures([]);
+        }
+      })
+      .catch(() => setSelectedFeatures([]));
+  }, [propertyId]);
+
+  // Fetch property data and populate fields
+  useEffect(() => {
+    if (!propertyId) return;
+    setLoading(true);
+    axios
+      .get(`https://real-estate-clientside2.onrender.com/?id=${propertyId}`)
+      .then((res) => {
+        const data = res.data;
+        setTitle(data.title || "");
+        setPrice(data.price?.toString() || "");
+        setDescription(data.description || "");
+        setBedrooms(data.bedrooms?.toString() || "");
+        setBathrooms(data.bathrooms?.toString() || "");
+        setSquareFeet(data.square_feet?.toString() || "");
+        setLotSize(data.lot_size || "");
+        setYearBuilt(data.year_built?.toString() || "");
+        setHoaFees(data.hoa_fees?.toString() || "");
+        setListedDate(data.listed_date || "");
+        setPropertyStatus(data.status || "");
+        setPropertyFor(data.property_for || "");
+        setSelectedLocationId(data.location_id?.toString() || "");
+        setSelectedPropertyTypeId(data.property_type_id?.toString() || "");
+        setSelectedFeatures(Array.isArray(data.features) ? data.features : []);
+        setImages(
+          data.image_url ? [{ url: data.image_url, image_for_ad: 1 }] : []
+        );
+      })
+      .catch((err) => {
+        alert("Failed to load property data.");
+      })
+      .finally(() => setLoading(false));
+  }, [propertyId]);
+
+
+  // Update property method
+  const handleUpdateProperty = async () => {
+    if (
+      !title ||
+      !description ||
+      !price ||
+      !bedrooms ||
+      !bathrooms ||
+      !selectedPropertyTypeId ||
+      !selectedLocationId ||
+      !propertyFor ||
+      !propertyStatus ||
+      !userId ||
+      images.length === 0
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+    const propertyData = {
+      id: propertyId,
+      title,
+      description,
+      price: Number(price),
+      bedrooms: Number(bedrooms),
+      bathrooms: Number(bathrooms),
+      square_feet: Number(squareFeet),
+      lot_size: lotSize,
+      year_built: Number(yearBuilt),
+      status: propertyStatus,
+      listed_date: listedDate,
+      hoa_fees: Number(hoaFees),
+      location_id: Number(selectedLocationId),
+      property_type_id: Number(selectedPropertyTypeId),
+      property_for: propertyFor,
+      user_id: userId,
+      features: selectedFeatures,
+      images,
+    };
+
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://real-estate-clientside2.onrender.com/?id=${propertyId}`,
+        {
+          method: "PUT", // or PATCH, depending on your API
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(propertyData),
+        }
+      );
+      const result = await response.json();
+      if (response.ok && result.success) {
+        alert("Property updated successfully!");
+      } else {
+        alert("Failed to update property.\n" + JSON.stringify(result));
+      }
+    } catch (error) {
+      alert("Error: " + error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 ">
@@ -474,7 +529,10 @@ export default function PropertyRegistrationForm() {
               </TabsContent>
 
               <TabsContent value="features" className="p-6">
-                <PropertyFeatures onChange={handleFeaturesChange} />
+                <PropertyFeatures
+                  value={selectedFeatures}
+                  onChange={setSelectedFeatures}
+                />
               </TabsContent>
 
               <TabsContent value="images" className="p-6">
@@ -490,9 +548,10 @@ export default function PropertyRegistrationForm() {
             <div className="flex items-center gap-4">
               <Button
                 className="px-8 bg-blue-600 hover:bg-blue-700"
-                onClick={handleCreateProperty}
+                onClick={handleUpdateProperty}
+                disabled={loading}
               >
-                Create Property
+                {loading ? "Updating..." : "Update Property"}
               </Button>
             </div>
           </div>

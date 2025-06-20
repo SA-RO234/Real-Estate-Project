@@ -7,7 +7,7 @@ const PropertyPage = () => {
       <h2 className="pb-2 text-3xl font-semibold tracking-tight transition-colors">
         Property Management
       </h2>
-      <Propertycontainer />
+      <Propertycontainer initialProperties={[]} />
     </div>
   );
 };

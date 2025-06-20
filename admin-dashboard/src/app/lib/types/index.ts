@@ -89,7 +89,7 @@ export interface UsersRegister {
 //  Propety Card  ( Dashboard )
 
 export interface Property {
-  id: number;
+  propertyID: number;
   title: string;
   image_url: string;
   city: string;

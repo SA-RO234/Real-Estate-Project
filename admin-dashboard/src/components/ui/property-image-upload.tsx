@@ -9,11 +9,14 @@ import { X, Plus, Upload } from "lucide-react";
 import { cn } from "@/app/lib/utils/utils";
 
 // Update: Accept images and setImages as props
+interface PropertyImage {
+  url: string;
+  image_for_ad: number;
+  isLocal?: boolean; // Add this flag for local previews
+}
 interface PropertyImageUploadProps {
-  images: { url: string; image_for_ad: number }[];
-  setImages: React.Dispatch<
-    React.SetStateAction<{ url: string; image_for_ad: number }[]>
-  >;
+  images: PropertyImage[];
+  setImages: React.Dispatch<React.SetStateAction<PropertyImage[]>>;
 }
 
 export default function PropertyImageUpload({
@@ -23,29 +26,61 @@ export default function PropertyImageUpload({
   const [dragOver, setDragOver] = useState(false);
   const [description, setDescription] = useState("");
 
-  // Helper to convert File to base64 URL
-  const fileToDataUrl = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => resolve(e.target?.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  async function uploadMultipleToCloudinary(
+    files: FileList | File[]
+  ): Promise<string[]> {
+    const url = "https://api.cloudinary.com/v1_1/dnfahcxo3/image/upload";
+    const uploadPreset = "Property_Images"; 
+    const uploadedUrls: string[] = [];
 
-  const handleFileUpload = useCallback(
-    async (files: FileList | null) => {
-      if (!files) return;
-      const newImages: { url: string; image_for_ad: number }[] = [];
-      for (const file of Array.from(files)) {
-        if (file.type.startsWith("image/")) {
-          const url = await fileToDataUrl(file);
-          newImages.push({ url, image_for_ad: 0 });
+    for (const file of Array.from(files)) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", uploadPreset);
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        if (data.secure_url) {
+          uploadedUrls.push(data.secure_url);
         }
+      } catch (error) {
+        console.error("Cloudinary upload failed:", error);
       }
-      setImages((prev) => [...prev, ...newImages]);
-    },
-    [setImages]
-  );
+    }
+    return uploadedUrls;
+  }
+
+ 
+const handleFileUpload = useCallback(
+  async (files: FileList | null) => {
+    if (!files) return;
+
+    // 1. Show local previews immediately
+    const localPreviews: PropertyImage[] = Array.from(files).map((file) => ({
+      url: URL.createObjectURL(file),
+      image_for_ad: 0,
+      isLocal: true,
+    }));
+    setImages((prev) => [...prev, ...localPreviews]);
+
+    // 2. Upload to Cloudinary
+    const urls = await uploadMultipleToCloudinary(files);
+
+    // 3. Replace local previews with Cloudinary URLs
+    setImages((prev) => {
+      // Remove the just-added local previews
+      const prevWithoutLocal = prev.filter((img) => !img.isLocal);
+      // Add the real Cloudinary images
+      const newImages = urls.map((url) => ({ url, image_for_ad: 0 }));
+      return [...prevWithoutLocal, ...newImages];
+    });
+  },
+  [setImages]
+);
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -96,11 +131,14 @@ export default function PropertyImageUpload({
                     src={image.url || "/placeholder.svg"}
                     alt={`Property image ${index + 1}`}
                     className="w-full h-full object-cover"
+                    style={
+                      image.isLocal ? { opacity: 0.5, filter: "blur(2px)" } : {}
+                    }
                   />
-                  {image.image_for_ad === 1 && (
-                    <div className="absolute top-2 left-2">
-                      <span className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full font-medium">
-                        Main Photo
+                  {image.isLocal && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="bg-white/80 px-2 py-1 rounded text-xs text-slate-700">
+                        Uploading...
                       </span>
                     </div>
                   )}

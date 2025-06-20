@@ -1,9 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { fetchProperties } from "@/app/lib/api/api";
+import { Property } from "@/app/lib/types";
 import PropertyCard from "./Properties-card";
-const Propertycontainer = () => {
-  const [properties, setProperties] = useState([]);
+const Propertycontainer = ({
+  initialProperties,
+}: {
+  initialProperties: Property[];
+}) => {
+  const [properties, setProperties] = useState(initialProperties);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
 
@@ -19,6 +25,8 @@ const Propertycontainer = () => {
         setLoading(false);
       });
   }, []);
+
+
 
   if (loading)
     return (
@@ -38,6 +46,10 @@ const Propertycontainer = () => {
       </div>
     );
 
+    const handleDelete = (propertyID: number) => {
+      setProperties((prev) => prev.filter((p) => p.propertyID !== propertyID));
+    };
+
   return (
     <div>
       <div className="min-h-screen">
@@ -46,8 +58,12 @@ const Propertycontainer = () => {
             <p className="text-center text-xl py-10">No properties found</p>
           ) : (
             <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties.map((pro, idx) => (
-                <PropertyCard key={idx} property={pro} />
+              {properties.map((property) => (
+                <PropertyCard
+                  key={property.propertyID}
+                  property={property}
+                  onDelete={handleDelete}
+                />
               ))}
             </div>
           )}
