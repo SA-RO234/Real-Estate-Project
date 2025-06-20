@@ -157,7 +157,7 @@ class PropertyController
     public function updateProperty()
     {
         $data = json_decode(file_get_contents('php://input'), true);
-        $this->property->updateProperty($data['id'], $data['title'], $data['description'], $data['price'], $data['location']);
+        $this->property->updateProperty($data['propertyID'], $data['title'], $data['description'], $data['price'], $data['location']);
         echo json_encode(['message' => "Property Updated Successfuly ! "]);
     }
 
@@ -166,12 +166,12 @@ class PropertyController
     {
         $data = json_decode(file_get_contents('php://input'), true);
 
-        if (!isset($data['id'])) {
+        if (!isset($data['propertyID'])) {
             http_response_code(400);
             echo json_encode(['error' => "Property ID is required."]);
             return;
         }
-        $id = intval($data['id']);
+        $id = intval($data['propertyID']);
 
         $result = $this->property->deleteProperty($id);
 
