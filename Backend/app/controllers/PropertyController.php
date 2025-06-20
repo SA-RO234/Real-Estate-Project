@@ -169,11 +169,11 @@ class PropertyController
             $data['square_feet'],
             $data['lot_size'],
             $data['year_built'],
-            $data['status'],
+            $data['status'] ?? null,
             $data['listed_date'],
             $data['hoa_fees'],
             $data['property_for'],
-            $data['property_type_id']
+            $data['property_type_id'] ?? null
         );
         echo json_encode(['message' => "Property Updated Successfully!"]);
     }
