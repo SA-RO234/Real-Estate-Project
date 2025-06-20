@@ -3,30 +3,38 @@ import SectionTitle from "@/components/shared/SectionTitle";
 import React, { useState } from "react";
 import PropertyList from "./PropertyList";
 import { PropertyType } from "@/lib/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchProperties } from "@/lib/api/api";
 import { Loader2 } from "lucide-react";
 import PaginationControls from "@/components/shared/PaginationControl";
 import { useGetPropertiesQuery } from "@/hooks/useGetPropertiesQuery";
 import PropertybyCityContainer from "./PropertyByCity/PropertybyCityContainer";
 import "./HomeForYou.scss";
+import { fetchProperties } from "@/lib/api/api";
 const ITEMS_PER_PAGE = 8;
 interface HomeForYouProps {
   searchResults?: PropertyType[];
 }
 
 const HomeForYou = ({ searchResults }: HomeForYouProps) => {
-  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [properties, setProperties] = useState<PropertyType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // --- Tanstack Query ---
-  const {
-    data: queryResponse,
-    isLoading,
-    isError,
-    error,
-    isFetching,
-  } = useGetPropertiesQuery(page, ITEMS_PER_PAGE);
+  // Fetch properties using fetchProperties directly
+  React.useEffect(() => {
+    if (searchResults) return; // Don't fetch if searchResults provided
+    setLoading(true);
+    setError(null);
+    fetchProperties(page, ITEMS_PER_PAGE)
+      .then((res) => {
+        setProperties(res.data || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err?.message || "Unknown error");
+        setLoading(false);
+      });
+  }, [page, searchResults]);
 
   const handleSeeMore = () => {
     const sessionId = localStorage.getItem("session_id");
@@ -53,36 +61,31 @@ const HomeForYou = ({ searchResults }: HomeForYouProps) => {
           </p>
         )
       ) : (
-        // Default listing logic
         <>
-          {/* Loading State (Initial Load) */}
-          {isLoading && (
+          {/* Loading State */}
+          {loading && (
             <div className="flex justify-center items-center h-60">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           )}
           {/* Error State */}
-          {isError && (
+          {error && (
             <div className="text-center text-destructive p-4 rounded-md">
-              <p>
-                Error loading properties: {error?.message || "Unknown error"}
-              </p>
+              <p>Error loading properties: {error}</p>
             </div>
           )}
-          {/* Success State (Render PropertyList) */}
-          {!isLoading && !isError && queryResponse?.data && (
-            <PropertyList properties={queryResponse.data.slice(0, 6)} />
+          {/* Success State */}
+          {!loading && !error && properties.length > 0 && (
+            <PropertyList properties={properties.slice(0, 6)} />
           )}
-          {!isLoading &&
-            !isError &&
-            (!queryResponse?.data || queryResponse.data.length === 0) && (
-              <p className="text-center text-muted-foreground mt-8">
-                No properties found for this page.
-              </p>
-            )}
+          {!loading && !error && properties.length === 0 && (
+            <p className="text-center text-muted-foreground mt-8">
+              No properties found for this page.
+            </p>
+          )}
         </>
       )}
-      {!isLoading && !isError && (
+      {!loading && !error && (
         <div className="w-[10%] m-[50px_auto]">
           <button className="Show-more" onClick={handleSeeMore}>
             <span className="circle" aria-hidden="true">
