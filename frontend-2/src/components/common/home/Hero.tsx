@@ -16,7 +16,7 @@ interface Property {
   id: number;
   title: string;
   description: string;
-  ad_image_url: string;
+  image_url: string;
   // add other fields as needed
 }
 const truncate = (text: string, maxLength: number) =>
@@ -70,7 +70,7 @@ const Hero: React.FC<HeroProps> = ({ setSearchResults }) => {
           <SwiperSlide key={item.id}>
             <div className="relative h-[700px] border text-red-800 w-[95%] m-auto rounded-[30px] overflow-hidden ">
               <img
-                src={item.ad_image_url}
+                src={item.image_url}
                 alt=""
                 className="w-full absolute z-[-1] h-full"
               />

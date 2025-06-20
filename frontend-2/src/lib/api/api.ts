@@ -30,7 +30,7 @@ export const fetchAllProperties = async () => {
 //  Fetch Property for Ad
 export const fetchPropertyForAd = async () => {
   const response = await fetch(
-    `http://localhost:3000/app/api/index.php?ads`
+    `https://real-estate-clientside2.onrender.com?ads`
   );
   const data = await response.json();
   return data;
@@ -45,7 +45,7 @@ export const fetchPropertyById = async (id: string) => {
 };
 
 // New============================================
-const API_URL = "http://localhost:3000/app/api/index.php";
+const API_URL = "https://real-estate-clientside2.onrender.com";
 
 export async function getProperty(id: number) {
   const res = await fetch(`${API_URL}/properties/${id}`);
@@ -96,7 +96,7 @@ export async function deleteProperty(id: number) {
 //  ============================================
 export const fetchPropertyByCategory = async () => {
   const response = await fetch(
-    "http://localhost:3000/app/api/index.php?typeCount"
+    "https://real-estate-clientside2.onrender.com?typeCount"
   );
   const data = await response.json();
   return data;
@@ -105,7 +105,7 @@ export const fetchPropertyByCategory = async () => {
 // get Number of Each Propety in City
 export const fetchPropertyOfEachCity = async () => {
   const response = await fetch(
-    "http://localhost:3000/app/api/index.php?byCity"
+    "https://real-estate-clientside2.onrender.com?byCity"
   );
   const data = await response.json();
   return data;
