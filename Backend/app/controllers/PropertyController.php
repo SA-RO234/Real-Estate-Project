@@ -157,8 +157,25 @@ class PropertyController
     public function updateProperty()
     {
         $data = json_decode(file_get_contents('php://input'), true);
-        $this->property->updateProperty($data['propertyID'], $data['title'], $data['description'], $data['price'], $data['location']);
-        echo json_encode(['message' => "Property Updated Successfuly ! "]);
+        $this->property->updateProperty(
+            $data['propertyID'],
+            $data['title'],
+            $data['description'],
+            $data['price'],
+            $data['location_id'],
+            $data['user_id'],
+            $data['bedrooms'],
+            $data['bathrooms'],
+            $data['square_feet'],
+            $data['lot_size'],
+            $data['year_built'],
+            $data['status'],
+            $data['listed_date'],
+            $data['hoa_fees'],
+            $data['property_for'],
+            $data['property_type_id']
+        );
+        echo json_encode(['message' => "Property Updated Successfully!"]);
     }
 
 

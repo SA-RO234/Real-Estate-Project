@@ -64,11 +64,20 @@ class PropertyModel
     }
 
     //  Retrieve  a single property by id ;
-    public function getPropertybyID($id)
+    public function getPropertyById($id)
     {
         try {
-            global $conn;
-            $stmt = $this->conn->prepare("SELECT * FROM  properties WHERE \"propertyID\" = ?");
+            $query = "SELECT 
+                        p.*, 
+                        l.city, 
+                        l.country, 
+                        pt.name AS property_type_name,
+                        (SELECT image_url FROM images WHERE property_id = p.\"propertyID\" LIMIT 1) AS image_url
+                      FROM properties p
+                      INNER JOIN locations l ON p.location_id = l.id
+                      INNER JOIN property_types pt ON p.property_type_id = pt.id
+                      WHERE p.\"propertyID\" = ?";
+            $stmt = $this->conn->prepare($query);
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -155,10 +164,61 @@ class PropertyModel
     }
 
     // Update an existing property
-    public function updateProperty($id, $title, $description, $price, $location_id)
-    {
-        $stmt = $this->conn->prepare("UPDATE properties SET title = ?, description = ?, price = ?, location_id = ? WHERE propertyID = ?");
-        $stmt->execute([$title, $description, $price, $location_id, $id]);
+    public function updateProperty(
+        $propertyID,
+        $title,
+        $description,
+        $price,
+        $location_id,
+        $user_id,
+        $bedrooms,
+        $bathrooms,
+        $square_feet,
+        $lot_size,
+        $year_built,
+        $status,
+        $listed_date,
+        $hoa_fees,
+        $property_for,
+        $property_type_id
+    ) {
+        $stmt = $this->conn->prepare(
+            'UPDATE properties SET
+                title = ?,
+                description = ?,
+                price = ?,
+                location_id = ?,
+                user_id = ?,
+                bedrooms = ?,
+                bathrooms = ?,
+                square_feet = ?,
+                lot_size = ?,
+                year_built = ?,
+                status = ?,
+                listed_date = ?,
+                hoa_fees = ?,
+                property_for = ?,
+                property_type_id = ?
+            WHERE "propertyID" = ?'
+        );
+        $stmt->execute([
+            $title,
+            $description,
+            $price,
+            $location_id,
+            $user_id,
+            $bedrooms,
+            $bathrooms,
+            $square_feet,
+            $lot_size,
+            $year_built,
+            $status,
+            $listed_date,
+            $hoa_fees,
+            $property_for,
+            $property_type_id,
+            $propertyID
+        ]);
     }
 
     // Delete a property
