@@ -166,8 +166,8 @@ export default function PropertyEditForm() {
       .finally(() => setLoading(false));
   }, [propertyId]);
 
-
   // Update property method
+  
   const handleUpdateProperty = async () => {
     if (
       !title ||
@@ -211,16 +211,25 @@ export default function PropertyEditForm() {
       const response = await fetch(
         `https://real-estate-clientside2.onrender.com/?id=${propertyId}`,
         {
-          method: "PUT", // or PATCH, depending on your API
+          method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(propertyData),
         }
       );
-      const result = await response.json();
-      if (response.ok && result.success) {
-        alert("Property updated successfully!");
+
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const result = await response.json();
+        if (response.ok && result.success) {
+          alert("Property updated successfully!");
+        } else {
+          alert("Failed to update property.\n" + JSON.stringify(result));
+        }
       } else {
-        alert("Failed to update property.\n" + JSON.stringify(result));
+        // Not JSON, probably an error page
+        const text = await response.text();
+        alert("Server error:\n" + text);
       }
     } catch (error) {
       alert("Error: " + error);
@@ -228,6 +237,7 @@ export default function PropertyEditForm() {
       setLoading(false);
     }
   };
+ 
 
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 ">
