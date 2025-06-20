@@ -68,7 +68,7 @@ class PropertyModel
     {
         try {
             global $conn;
-            $stmt = $this->conn->prepare("SELECT * FROM  properties WHERE propertyID = ?");
+            $stmt = $this->conn->prepare("SELECT * FROM  properties WHERE \"propertyID\" = ?");
             $stmt->execute([$id]);
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -166,14 +166,14 @@ class PropertyModel
     {
         try {
             // Check if property exists
-            $check = $this->conn->prepare("SELECT propertyID FROM properties WHERE propertyID = ?");
+            $check = $this->conn->prepare("SELECT \"propertyID\" FROM properties WHERE \"propertyID\" = ?");
             $check->execute([$id]);
             if ($check->rowCount() === 0) {
                 return "Property not found";
             }
 
             // Update status to 'deleted'
-            $stmt = $this->conn->prepare("UPDATE properties SET status = 'deleted' WHERE propertyID = ?");
+            $stmt = $this->conn->prepare("UPDATE properties SET status = 'deleted' WHERE \"propertyID\" = ?");
             $stmt->execute([$id]);
 
             if ($stmt->rowCount() > 0) {
