@@ -13,7 +13,11 @@ $input = json_decode(file_get_contents('php://input'), true);
 // Routing
 switch ($method) {
     case 'GET':
-        $controller->getAllPropertyFeature();
+        if (isset($_GET['property_id'])) {
+            $controller->getAllPropertyFeatureByPropertyID($_GET['property_id']);
+        } else {
+            $controller->getAllPropertyFeature();
+        }
         break;
 
     case 'POST':

@@ -1,7 +1,8 @@
 <?php
 require_once '../models/propertyFeatureModel.php';
 
-class propertyFeatureController{
+class propertyFeatureController
+{
     private $model;
     public function __construct()
     {
@@ -13,7 +14,7 @@ class propertyFeatureController{
     {
         $features = $this->model->getAllPropertyFeature();
         header('Content-Type: application/json');
-        echo json_encode($features,JSON_PRETTY_PRINT);
+        echo json_encode($features, JSON_PRETTY_PRINT);
     }
 
     // Add a new property feature
@@ -25,7 +26,8 @@ class propertyFeatureController{
     }
 
     // Delete a property feature by ID
-    public function deletePropertyFeature($id){
+    public function deletePropertyFeature($id)
+    {
         $result = $this->model->deletePropertyFeature($id);
         header('Content-Type: application/json');
         echo json_encode(['success' => $result]);
@@ -37,5 +39,13 @@ class propertyFeatureController{
         $result = $this->model->updatePropertyFeature($id, $name);
         header('Content-Type: application/json');
         echo json_encode(['success' => $result]);
+    }
+
+    // Get all features for a given propertyID
+    public function getAllPropertyFeatureByPropertyID($propertyID)
+    {
+        $features = $this->model->getAllPropertyFeatureByPropertyID($propertyID);
+        header('Content-Type: application/json');
+        echo json_encode($features, JSON_PRETTY_PRINT);
     }
 }

@@ -6,7 +6,7 @@ class propertyFeatureModel
     public function __construct()
     {
         $database = new Database();
-        $this->db = $database->getConnection(); 
+        $this->db = $database->getConnection();
     }
 
     // Get all property features
@@ -41,5 +41,17 @@ class propertyFeatureModel
             ':id' => $id,
             ':name' => $name,
         ]);
+    }
+
+    public function getAllPropertyFeatureByPropertyID($propertyID)
+    {
+        $stmt = $this->db->prepare(
+            "SELECT f.* 
+         FROM property_features pf
+         INNER JOIN features f ON pf.feature_id = f.id
+         WHERE pf.property_id = :propertyID"
+        );
+        $stmt->execute([':propertyID' => $propertyID]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
