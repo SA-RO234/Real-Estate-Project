@@ -30,23 +30,23 @@ class PropertyModel
     }
 
     //   Retrieve all property from database 
-    public function getAllproperties()
-    {
-        try {
-            $query = "SELECT 
+    public function getAllproperties(){
+    try {
+        $query = "SELECT 
                     p.*, 
                     locations.*,
                     COALESCE(p.property_for, 'unknown') AS property_for,
                     (SELECT image_url FROM images WHERE property_id = p.id LIMIT 1) AS image_url
                   FROM {$this->table_name} p
-                  INNER JOIN locations ON p.location_id = locations.id";
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-            return $stmt;
-        } catch (PDOException $e) {
-            die('Database Error : ' . $e->getMessage());
-        }
+                  INNER JOIN locations ON p.location_id = locations.id
+                  WHERE p.status IS NULL OR p.status != 'deleted'";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    } catch (PDOException $e) {
+        die('Database Error : ' . $e->getMessage());
     }
+}
 
     public function getPropertyforAd()
     {
@@ -152,8 +152,7 @@ class PropertyModel
             return false;
         }
     }
-    // ...existing code...
-
+  
     // Update an existing property
     public function updateProperty($id, $title, $description, $price, $location_id)
     {
@@ -165,17 +164,25 @@ class PropertyModel
     public function deleteProperty($id)
     {
         try {
-            $stmt = $this->conn->prepare("DELETE FROM properties WHERE id = ?");
+            // Check if property exists
+            $check = $this->conn->prepare("SELECT id FROM properties WHERE id = ?");
+            $check->execute([$id]);
+            if ($check->rowCount() === 0) {
+                return "Property not found";
+            }
+
+            // Update status to 'deleted'
+            $stmt = $this->conn->prepare("UPDATE properties SET status = 'deleted' WHERE id = ?");
             $stmt->execute([$id]);
 
             if ($stmt->rowCount() > 0) {
                 return true;
             } else {
-                return false;
+                return "No rows updated (maybe already deleted?)";
             }
         } catch (PDOException $e) {
-            error_log("Delete Property Error: " . $e->getMessage());
-            return false;
+            error_log("Soft Delete Property Error: " . $e->getMessage());
+            return $e->getMessage();
         }
     }
 

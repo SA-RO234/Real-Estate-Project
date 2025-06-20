@@ -163,24 +163,23 @@ class PropertyController{
 
     public function deleteProperty()
     {
-        // Get JSON input and decode it
         $data = json_decode(file_get_contents('php://input'), true);
 
-        // Check if the data is valid and contains an ID
         if (!isset($data['id'])) {
+            http_response_code(400);
             echo json_encode(['error' => "Property ID is required."]);
-            http_response_code(400); // Bad Request
             return;
         }
-        $id = intval($_GET['id']);
-        echo ("ID : " . $id);
-        // Attempt to delete the property
-        if ($this->property->deleteProperty($id)) {
+        $id = intval($data['id']);
+
+        $result = $this->property->deleteProperty($id);
+
+        if ($result === true) {
+            http_response_code(200);
             echo json_encode(['message' => "Property deleted successfully!"]);
-            http_response_code(200); // OK
         } else {
-            echo json_encode(['error' => "Failed to delete property."]);
-            http_response_code(500); // Internal Server Error
+            http_response_code(500);
+            echo json_encode(['error' => "Failed to delete property.", 'detail' => $result]);
         }
     }
 
