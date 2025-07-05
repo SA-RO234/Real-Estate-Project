@@ -63,7 +63,7 @@ class PropertyModel
         }
     }
 
-    //  Retrieve  a single property by id ;
+    //  Retrieve  a single property by id 
     public function getPropertyById($id)
     {
         try {
@@ -71,15 +71,26 @@ class PropertyModel
                         p.*, 
                         l.city, 
                         l.country, 
-                        pt.name AS property_type_name,
-                        (SELECT image_url FROM images WHERE property_id = p.\"propertyID\" LIMIT 1) AS image_url
+                        pt.name AS property_type_name
                       FROM properties p
                       INNER JOIN locations l ON p.location_id = l.id
                       INNER JOIN property_types pt ON p.property_type_id = pt.id
                       WHERE p.\"propertyID\" = ?";
             $stmt = $this->conn->prepare($query);
             $stmt->execute([$id]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $property = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($property) {
+                // Fetch all images for this property
+                $imgQuery = "SELECT image_url FROM images WHERE property_id = ?";
+                $imgStmt = $this->conn->prepare($imgQuery);
+                $imgStmt->execute([$id]);
+                $images = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
+    
+                $property['images'] = $images;
+            }
+    
+            return $property;
         } catch (PDOException $e) {
             error_log("Error retrieving property by ID: " . $e->getMessage());
             return false;
