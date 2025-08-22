@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { fetchProperties } from "@/app/lib/api/api";
+import { fetchAllProperties } from "@/app/lib/api/api";
 import { Property } from "@/app/lib/types";
 import PropertyCard from "./Properties-card";
 const Propertycontainer = ({
@@ -14,7 +14,7 @@ const Propertycontainer = ({
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    fetchProperties()
+    fetchAllProperties()
       .then((data: any) => {
         // Ensure data.data is an array
         setProperties(Array.isArray(data.data) ? data.data : []);
@@ -57,7 +57,7 @@ const Propertycontainer = ({
           {properties.length === 0 ? (
             <p className="text-center text-xl py-10">No properties found</p>
           ) : (
-            <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="relative flex flex-wrap gap-5 ">
               {properties.map((property) => (
                 <PropertyCard
                   key={property.propertyID}

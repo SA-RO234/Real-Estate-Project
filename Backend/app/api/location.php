@@ -3,9 +3,7 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS"); // Fixed header (correct name and removed spaces)
 header("Access-Control-Allow-Headers: Content-Type");
-
 require_once "../controllers/locationController.php";
-
 $controller = new locationController();
 
 // Get HTTP method and input
@@ -32,7 +30,6 @@ switch ($method) {
             echo json_encode(['error' => 'Missing parameters']);
         }
         break;
-
     case 'PUT':
         if (isset($_GET['id'], $input['city'], $input['country'], $input['city_image'])) {
             $success = $controller->updateLocation($_GET['id'], $input['city'], $input['country'], $input['city_image']);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   MapPin,
@@ -20,33 +20,39 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { useParams } from "next/navigation";
+import { fetchPropertyById } from "@/app/lib/api/api";
 
 export default function PropertyDetail() {
+  const params = useParams();
+  const id = params.id;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [propertyData, setPropertyData] = useState<any>(null);
+  const [images, setImages] = useState<string[]>([]);
 
-  const images = [
-    "/images/villa-main.png",
-    "/placeholder.svg?height=600&width=800",
-    "/placeholder.svg?height=600&width=800",
-    "/placeholder.svg?height=600&width=800",
-  ];
+  // const images = [
+  //   "/images/villa-main.png",
+  //   "/placeholder.svg?height=600&width=800",
+  //   "/placeholder.svg?height=600&width=800",
+  //   "/placeholder.svg?height=600&width=800",
+  // ];
 
-  const propertyData = {
-    title: "good villa",
-    location: "tangier",
-    address: "avenir moulay rachid",
-    type: "villa",
-    bedrooms: 6,
-    bathrooms: 6,
-    livingRooms: 6,
-    kitchens: 6,
-    standard: "economical",
-    status: "rent",
-    action: "available",
-    floors: 0,
-    garages: 0,
-    description: "6666666",
-  };
+  // const propertyData = {
+  //   title: "good villa",
+  //   location: "tangier",
+  //   address: "avenir moulay rachid",
+  //   type: "villa",
+  //   bedrooms: 6,
+  //   bathrooms: 6,
+  //   livingRooms: 6,
+  //   kitchens: 6,
+  //   standard: "economical",
+  //   status: "rent",
+  //   action: "available",
+  //   floors: 0,
+  //   garages: 0,
+  //   description: "6666666",
+  // };
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -55,6 +61,30 @@ export default function PropertyDetail() {
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
+
+  //  Fetch Property by ID :
+  useEffect(() => {
+    if (!id) return;
+    fetchPropertyById(String(id)).then((res: any) => {
+      setPropertyData(res);
+      // If images array exists, use it; else fallback to image_url or placeholder
+      if (Array.isArray(res?.images) && res.images.length > 0) {
+        setImages(res.images);
+      } else if (res?.image_url) {
+        setImages([res.image_url]);
+      } else {
+        setImages(["/placeholder.svg"]);
+      }
+    });
+  }, [id]);
+
+  if (!propertyData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span>Loading property details...</span>
+      </div>
+    );
+  }
 
   const overviewItems = [
     {
@@ -88,23 +118,12 @@ export default function PropertyDetail() {
       color: "text-orange-600",
     },
     {
-      icon: Star,
-      label: "Standard",
-      value: propertyData.standard,
-      color: "text-yellow-600",
-    },
-    {
       icon: Info,
       label: "Status",
       value: propertyData.status,
       color: "text-blue-600",
     },
-    {
-      icon: Diamond,
-      label: "Action",
-      value: propertyData.action,
-      color: "text-green-600",
-    },
+   
     {
       icon: Layers,
       label: "Floors",
@@ -121,7 +140,7 @@ export default function PropertyDetail() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto p-4 lg:p-8">
+      <div className=" mx-auto p-4 lg:p-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2 capitalize">
@@ -130,15 +149,9 @@ export default function PropertyDetail() {
           <div className="flex items-center text-gray-600 mb-4">
             <MapPin className="w-5 h-5 mr-2 text-blue-600" />
             <span className="text-lg">
-              {propertyData.location}, {propertyData.address}
+              {propertyData.city}, {propertyData.country}
             </span>
           </div>
-          <Badge
-            variant="secondary"
-            className="bg-green-100 text-green-800 hover:bg-green-100"
-          >
-            {propertyData.action}
-          </Badge>
         </div>
 
         {/* Image Gallery */}
@@ -175,7 +188,7 @@ export default function PropertyDetail() {
           </div>
 
           {/* Thumbnail Gallery */}
-          <div className="flex gap-4 overflow-x-auto pb-2">
+          <div className="flex  gap-4 overflow-x-auto p-2">
             {images.map((image, index) => (
               <button
                 key={index}
@@ -251,26 +264,6 @@ export default function PropertyDetail() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Contact Card */}
-            <Card>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">
-                  Contact Agent
-                </h3>
-                <div className="space-y-3">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                    Schedule Viewing
-                  </Button>
-                  <Button variant="outline" className="w-full">
-                    Contact Agent
-                  </Button>
-                  <Button variant="outline" className="w-full">
-                    Save Property
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Property Stats */}
             <Card>
               <CardContent className="p-6">
@@ -281,7 +274,7 @@ export default function PropertyDetail() {
                   <div className="flex justify-between">
                     <span className="text-gray-600">Property Type</span>
                     <span className="font-semibold capitalize">
-                      {propertyData.type}
+                      {propertyData.property_type_name}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -291,21 +284,6 @@ export default function PropertyDetail() {
                       className="bg-blue-100 text-blue-800"
                     >
                       {propertyData.status}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Standard</span>
-                    <span className="font-semibold capitalize">
-                      {propertyData.standard}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Availability</span>
-                    <Badge
-                      variant="secondary"
-                      className="bg-green-100 text-green-800"
-                    >
-                      {propertyData.action}
                     </Badge>
                   </div>
                 </div>

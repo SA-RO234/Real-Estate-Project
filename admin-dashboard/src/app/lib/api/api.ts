@@ -1,24 +1,4 @@
-
-export const fetchProperties = async (page: number = 1, limit: number = 4) => {
-  const response = await fetch(
-    `https://real-estate-clientside2.onrender.com`
-  );
-  const data = await response.json();
-  const totalItems = response.headers.get("X-Total-Count")
-    ? parseInt(response.headers.get("X-Total-Count") || "0", 10)
-    : data.length;
-
-  return {
-    data,
-    pagination: {
-      currentPage: page,
-      pageSize: limit,
-      totalPages: Math.ceil(totalItems / limit),
-      totalItems,
-    },
-  };
-};
-
+import axios from "axios";
 //  Fetch ALl Property
 export const fetchAllProperties = async () => {
   const response = await fetch(`https://real-estate-clientside2.onrender.com`);
@@ -36,23 +16,23 @@ export const fetchPropertyForAd = async () => {
 };
 
 export const fetchPropertyById = async (id: string) => {
-  const response = await fetch(
-    `http://localhost:3000/app/api/index.php/id=${id}`
+  const response = await axios.get(
+    `https://real-estate-clientside2.onrender.com?id=${id}`
   );
-  const data = await response.json();
-  return data;
+  return response.data;
+};
+
+//  fetch  all property Type
+export const fetchAllPropertyType = async () => {
+  const response = await axios.get(
+    "https://real-estate-clientside2.onrender.com?propertyType"
+  );
+
+  return response.data;
 };
 
 // New============================================
-const API_URL = "http://localhost:3000/app/api/index.php";
-
-export async function getProperty(id: number) {
-  const res = await fetch(`${API_URL}/properties/${id}`);
-  if (!res.ok) {
-    throw new Error("Failed to fetch property");
-  }
-  return res.json();
-}
+const API_URL = "https://real-estate-clientside2.onrender.com";
 
 export async function createProperty(property: any) {
   const res = await fetch(`${API_URL}/properties`, {
@@ -110,5 +90,3 @@ export const fetchPropertyOfEachCity = async () => {
   const data = await response.json();
   return data;
 };
-
-

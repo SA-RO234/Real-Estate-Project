@@ -51,7 +51,7 @@ export default function PropertyCard({
     });
   }
   return (
-    <div className="border p-2  rounded-2xl  cursor-pointer overflow-hidden shadow-lg bg-white">
+    <div className="border w-[400px] p-2 rounded-2xl cursor-pointer overflow-hidden bg-white">
       <div className="relative h-48">
         {property.image_url && property.image_url.length > 0 ? (
           <img

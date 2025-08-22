@@ -46,12 +46,12 @@ const data = {
         },
         {
           title: "Property Type",
-          url: "/property/propetyType",
+          url: "/property/propertyType",
           icon: Building,
         },
         {
           title: "Property Feature",
-          url: "/property/propertyEachCity",
+          url: "/property/propertyFeature",
           icon: Bath,
         },
       ],
